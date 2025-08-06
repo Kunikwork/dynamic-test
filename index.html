@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dynamic Greeting</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin-top: 10%; }
@@ -13,40 +13,63 @@
   <h1 id="greeting">Hello</h1>
   <div class="loader" id="loader"></div>
   <script>
-    // Helper: get query parameter (?name=...)
     function getQueryParam(key) {
       return new URLSearchParams(window.location.search).get(key);
     }
-    // Helper: greeting by hour
+
     function getGreeting(hour) {
       if (hour >= 5 && hour < 12)    return "Good Morning";
       if (hour >= 12 && hour < 18)   return "Good Afternoon";
       if (hour >= 18 && hour < 22)   return "Good Evening";
       return "Hello";
     }
-    // Main logic
+
+    // Typewriter effect for the name: gradually show the letters
+    async function typeWriter(element, text, speed = 100) {
+      element.textContent = "";
+      for (let i = 0; i < text.length; i++) {
+        element.textContent += text.charAt(i);
+        await new Promise(resolve => setTimeout(resolve, speed));
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", async function () {
       const name = getQueryParam("name");
+
       if (!name) {
         document.getElementById("greeting").textContent = "Hello";
         return;
       }
-      document.getElementById("greeting").textContent = `Hi ${name}, one moment...`;
+
+      document.getElementById("greeting").textContent = `Hi, one moment...`;
       document.getElementById("loader").textContent = "Detecting your local time...";
 
       try {
-        // Fetch IP and location (ipapi.co is very fast & free)
         const res = await fetch("https://ipapi.co/json/");
         const data = await res.json();
-        // Get current time in user's time zone
-        const now = new Date( new Date().toLocaleString("en-US", {timeZone: data.timezone}) );
+        const now = new Date(new Date().toLocaleString("en-US", { timeZone: data.timezone }));
         const greeting = getGreeting(now.getHours());
 
-        document.getElementById("greeting").textContent = `${greeting} ${name},`;
-        document.getElementById("loader").textContent = ""; // done
+        document.getElementById("loader").textContent = "";
+
+        // Split greeting and typewriter for name
+        // e.g. "Good Afternoon " — static, name — typewriter, "," — static
+        const greetingElement = document.getElementById("greeting");
+        greetingElement.textContent = greeting + " ";
+
+        // Create a span to hold the typed name
+        const nameSpan = document.createElement("span");
+        greetingElement.appendChild(nameSpan);
+
+        await typeWriter(nameSpan, name, 120); // 120ms speed per char, adjust as needed
+
+        // Append the comma after typing finishes
+        greetingElement.appendChild(document.createTextNode(","));
+
       } catch (e) {
-        document.getElementById("greeting").textContent = `Hello ${name},`;
+        // Fallback: no typing effect if error
         document.getElementById("loader").textContent = "(Could not detect your local time.)";
+        document.getElementById("greeting").textContent = `Hello ${name},`;
       }
     });
   </script>
