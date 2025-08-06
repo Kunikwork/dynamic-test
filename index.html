@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Greeting</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 10%; }
+    h1 { font-size: 2.5rem; }
+    .loader { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1 id="greeting">Hello</h1>
+  <div class="loader" id="loader"></div>
+  <script>
+    // Helper: get query parameter (?name=...)
+    function getQueryParam(key) {
+      return new URLSearchParams(window.location.search).get(key);
+    }
+    // Helper: greeting by hour
+    function getGreeting(hour) {
+      if (hour >= 5 && hour < 12)    return "Good Morning";
+      if (hour >= 12 && hour < 18)   return "Good Afternoon";
+      if (hour >= 18 && hour < 22)   return "Good Evening";
+      return "Hello";
+    }
+    // Main logic
+    document.addEventListener("DOMContentLoaded", async function () {
+      const name = getQueryParam("name");
+      if (!name) {
+        document.getElementById("greeting").textContent = "Hello";
+        return;
+      }
+      document.getElementById("greeting").textContent = `Hi ${name}, one moment...`;
+      document.getElementById("loader").textContent = "Detecting your local time...";
+
+      try {
+        // Fetch IP and location (ipapi.co is very fast & free)
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        // Get current time in user's time zone
+        const now = new Date( new Date().toLocaleString("en-US", {timeZone: data.timezone}) );
+        const greeting = getGreeting(now.getHours());
+
+        document.getElementById("greeting").textContent = `${greeting} ${name},`;
+        document.getElementById("loader").textContent = ""; // done
+      } catch (e) {
+        document.getElementById("greeting").textContent = `Hello ${name},`;
+        document.getElementById("loader").textContent = "(Could not detect your local time.)";
+      }
+    });
+  </script>
+</body>
+</html>
