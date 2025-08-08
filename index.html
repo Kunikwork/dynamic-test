@@ -1,17 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dynamic Greeting</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Job Description Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 10%; }
-    h1 { font-size: 2.5rem; }
-    .loader { margin-top: 2rem; font-style: italic; color: gray; }
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #37393d;
+      color: #f5f5f5;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* Weather animations */
+    .weather-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.07;
+    }
+
+    /* Sunny */
+    .sunny .sun {
+      position: absolute;
+      top: 20%;
+      right: 15%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, #ffeb3b, transparent 70%);
+      border-radius: 50%;
+      box-shadow: 0 0 50px #ff9800;
+      animation: sunGlow 4s infinite alternate;
+    }
+
+    @keyframes sunGlow {
+      0% { box-shadow: 0 0 50px #ff9800; }
+      100% { box-shadow: 0 0 80px #ffeb3b, 0 0 100px #ff9800; }
+    }
+
+    /* Rainy */
+    .rainy .rain {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+
+    .rainy .drop {
+      position: absolute;
+      top: -20px;
+      width: 2px;
+      height: 20px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+      animation: rainFall 1.5s linear infinite;
+    }
+
+    @keyframes rainFall {
+      to { transform: translateY(100vh); }
+    }
+
+    /* Snowy */
+    .snowy .snowflake {
+      position: absolute;
+      top: -20px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 24px;
+      animation: snowFall 8s linear infinite;
+    }
+
+    @keyframes snowFall {
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* Cloudy */
+    .cloudy .cloud {
+      position: absolute;
+      background: rgba(200, 200, 200, 0.15);
+      border-radius: 50%;
+      animation: cloudMove 30s linear infinite;
+    }
+
+    @keyframes cloudMove {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100vw); }
+    }
+
+    /* Windy */
+    .windy .wind {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      animation: windBlow 3s linear infinite;
+    }
+
+    @keyframes windBlow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Container */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #556270);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f5f5f5, #d4d4d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    #greeting {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: 300;
+      color: #d4d4d4;
+      min-height: 2.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      color: #d4d4d4;
+      font-weight: 300;
+    }
+
+    /* Prompt container */
+    .prompt-container {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .prompt-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #f5f5f5;
+    }
+
+    /* Copy button */
+    #copy-button {
+      background: linear-gradient(45deg, #556270, #4ecdc4);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #copy-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    #copy-button:active {
+      transform: translateY(1px);
+    }
+
+    #copy-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #4ecdc4, #556270);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #copy-button.copied {
+      background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    }
+
+    #copy-button.copied::after {
+      content: 'Copied!';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(46, 125, 50, 0.9);
+    }
+
+    #copy-button i {
+      transition: transform 0.3s ease;
+    }
+
+    #copy-button.copied i {
+      transform: scale(0);
+    }
+
+    /* Prompt text */
+    #prompt-text {
+      background: rgba(10, 10, 10, 0.3);
+      border-radius: 12px;
+      padding: 25px;
+      max-height: 500px;
+      overflow-y: auto;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #f0f0f0;
+      font-family: 'Courier New', monospace;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: pre-wrap;
+    }
+
+    #prompt-text::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #prompt-text::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    #prompt-text::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, #556270, #4ecdc4);
+      border-radius: 10px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 20px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      #greeting {
+        font-size: 1.5rem;
+      }
+      
+      .prompt-container {
+        padding: 20px;
+      }
+      
+      .prompt-header {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      #prompt-text {
+        padding: 15px;
+        font-size: 0.95rem;
+      }
+      
+      #copy-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      #greeting {
+        font-size: 1.3rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+    }
+
+    /* Loader */
+    .loader {
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .loader::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #f5f5f5;
+      border-color: #f5f5f5 transparent #f5f5f5 transparent;
+      animation: loader 1.2s linear infinite;
+    }
+
+    @keyframes loader {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <h1 id="greeting">Hello</h1>
-  <div class="loader" id="loader"></div>
+  <!-- Weather animation container -->
+  <div class="weather-animation" id="weather-animation"></div>
+  
+  <div class="container">
+    <header>
+      <h1>Job Description Generator</h1>
+      <div id="greeting">Hello<span class="loader"></span></div>
+      <p class="subtitle">Create world-class job descriptions, LinkedIn promotions, and screening questions with AI precision</p>
+    </header>
+    
+    <main>
+      <div class="prompt-container">
+        <div class="prompt-header">
+          <h2 class="prompt-title">CustomGPT Prompt</h2>
+          <button id="copy-button">
+            <i class="fas fa-copy"></i> Copy Prompt
+          </button>
+        </div>
+        <pre id="prompt-text"></pre>
+      </div>
+    </main>
+    
+    <footer>
+      <p>Powered by Advanced AI Technology | Static GitHub Page</p>
+    </footer>
+  </div>
 
   <script>
     // Get query parameter from URL
@@ -37,54 +426,348 @@
       }
     }
 
+    // Set weather animation based on condition
+    function setWeatherAnimation(condition) {
+      const animationEl = document.getElementById('weather-animation');
+      animationEl.className = 'weather-animation';
+      
+      // Clear any existing elements
+      animationEl.innerHTML = '';
+      
+      // Add animation based on condition
+      if (condition === 'Rain') {
+        animationEl.classList.add('rainy');
+        for (let i = 0; i < 60; i++) {
+          const drop = document.createElement('div');
+          drop.className = 'drop';
+          drop.style.left = `${Math.random() * 100}%`;
+          drop.style.animationDelay = `${Math.random() * 2}s`;
+          drop.style.animationDuration = `${0.5 + Math.random() * 1}s`;
+          animationEl.appendChild(drop);
+        }
+      } 
+      else if (condition === 'Snow') {
+        animationEl.classList.add('snowy');
+        const snowflakes = ['❄', '❅', '❆'];
+        for (let i = 0; i < 40; i++) {
+          const flake = document.createElement('div');
+          flake.className = 'snowflake';
+          flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+          flake.style.left = `${Math.random() * 100}%`;
+          flake.style.animationDelay = `${Math.random() * 5}s`;
+          flake.style.fontSize = `${10 + Math.random() * 20}px`;
+          flake.style.opacity = 0.3 + Math.random() * 0.7;
+          animationEl.appendChild(flake);
+        }
+      } 
+      else if (condition === 'Clear') {
+        animationEl.classList.add('sunny');
+        const sun = document.createElement('div');
+        sun.className = 'sun';
+        animationEl.appendChild(sun);
+      } 
+      else if (condition === 'Clouds') {
+        animationEl.classList.add('cloudy');
+        for (let i = 0; i < 5; i++) {
+          const cloud = document.createElement('div');
+          cloud.className = 'cloud';
+          cloud.style.top = `${20 + Math.random() * 60}%`;
+          cloud.style.width = `${100 + Math.random() * 200}px`;
+          cloud.style.height = `${60 + Math.random() * 40}px`;
+          cloud.style.animationDelay = `${Math.random() * 10}s`;
+          animationEl.appendChild(cloud);
+        }
+      } 
+      else if (condition === 'Wind') {
+        animationEl.classList.add('windy');
+        const wind = document.createElement('div');
+        wind.className = 'wind';
+        animationEl.appendChild(wind);
+      }
+    }
+
+    // Get weather data based on location
+    async function getWeather(latitude, longitude) {
+      try {
+        // Using OpenWeatherMap API (example implementation)
+        // You'll need to sign up for an API key at openweathermap.org
+        const apiKey = 'YOUR_OPENWEATHER_API_KEY';
+        if (!apiKey || apiKey === 'YOUR_OPENWEATHER_API_KEY') return null;
+        
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Weather API responded with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.weather[0].main;
+      } catch (error) {
+        console.error('Error getting weather:', error);
+        return null;
+      }
+    }
+
+    // Copy button functionality
+    function setupCopyButton() {
+      const copyButton = document.getElementById('copy-button');
+      const promptText = document.getElementById('prompt-text').textContent;
+      
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(promptText);
+          
+          // Visual feedback
+          copyButton.classList.add('copied');
+          setTimeout(() => {
+            copyButton.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+          alert('Failed to copy text to clipboard');
+        }
+      });
+    }
+
+    // Set the prompt text
+    function setPromptText() {
+      const promptText = document.getElementById('prompt-text');
+      promptText.textContent = `Purpose:
+This all-in-one prompt will guide you through a seamless process to produce world-class job descriptions, LinkedIn job promotions, and first-round candidate screening questions. The system will automatically research, benchmark, and generate outputs tailored to your company, role, and hiring needs, ensuring inclusivity, legal compliance, and standout clarity. No detail or blind spot is left unaddressed.
+
+1. User Input Workflow (Conversational & Modular)
+
+Request this information up-front, giving helpful examples and allowing "unknown" for any optional item. Explain to the user that the more provided, the more tailored and unique the outcome.
+
+Company Name (required)
+
+Company Website (required for branding/tone research)
+
+Job Title (required; example: "Senior Product Designer", not "Design Guru")
+
+Location (required; Remote, specify timezone, Hybrid, days/week & location, On-site, city/state/country)
+
+Must-Have Qualifications / Experience / Skills (highly recommended, not mandatory)
+
+Nice-to-Have (Preferred) Skills / Experience (optional)
+
+Reporting Structure (optional, who does this role report to? If unspecified, AI will auto-benchmark against industry/LinkedIn best practices)
+
+Team Details (optional, size, focus, energy)
+
+Salary Range (optional; if missing, AI benchmarks will auto-fill)
+
+Unique Perks, Benefits, or Cultural Elements (optional but can be a powerful attractor)
+
+Any critical requirements or deal-breakers? (optional; used for filtering)
+
+If any input is missing, the assistant will:
+Use advanced multi-platform research (Glassdoor, LinkedIn, Reddit, salary aggregators, company site, and open data) to autofill gaps.
+Where autofilling is required, outputs clearly state "Estimated based on [sources]. Please verify for accuracy."
+
+2. Dynamic Research Protocol (Runs Automatically)
+
+Scrape Company Channels: Mirror copy, sentence length, and tone/branding from "About Us," "Culture," and recent news/Careers content.
+
+Salary Benchmarking: Collate data from Glassdoor (company & role), Payscale, Indeed, Levels.fyi (for tech roles), public Reddit threads, plus industry-wide benchmarks. Clearly display a salary range + citation if AI-generated.
+
+Culture & Sentiment Check: Aggregate real insights from Reddit/Blind/LinkedIn.
+
+Competitive Market Comparison: Review 3 top LinkedIn job posts for attention-catching phrases, responsibilities, and design.
+
+Reporting Structure Guess: If user does not specify, auto-benchmark reporting line using LinkedIn and industry standards for similar roles/titles.
+
+3. Output 1: Dynamic, Inclusive Job Description (Table-Free, Bullet-First, Short-Paragraph Only!)
+
+Enforced Rules:
+
+Never use any em dashes — or this character: —
+
+Max 15 words per sentence. No paragraph over 3 lines.
+
+Short, easy-to-read, accessible sentences. No jargon or abbreviations without first explaining them.
+
+Bias, gender, and ADA (Americans with Disabilities Act) checks applied for clarity and legal compliance.
+
+Bold section headers for impact (mark with "**" for clarity).
+
+End each section with a line break, not a table.
+
+Use hyphens or commas only—never an em dash or —
+
+If output published elsewhere (like LinkedIn, Greenhouse), format so it looks visually clean and inviting.
+
+Section Flow (with sample prompts for AI to fill as needed):
+
+Company: [Dynamic from user company name]
+
+Job Title: [Dynamic from user, no jargon]
+
+Location: [Remote, Hybrid, or On-site + details]
+
+About Us:
+[A two-sentence overview mirroring company's actual tone. E.g., "At AcmeTech, we create AI tools to democratize education. Join us to build technology that impacts millions."]
+
+Your Impact:
+[1 sentence - why this job matters for candidates and the company]
+[1 sentence about the immediate team or context]
+[1 success metric sentence ("You'll help launch 3 product features/quarter.")]
+
+Key Responsibilities:
+Action verbs only: Drive, Design, Optimize, etc.
+Focus on outcomes, not "responsible for..."
+4–8 bullet points, each specific and measurable to the role/title/industry, may have more than 8 bullet points based on the job role, industry or user request.
+
+Required Qualifications:
+Only those essential for on-the-job success (no "ninja" or "rockstar")
+Eg: "3+ years in consumer SaaS design" or "Deep Adobe XD skills"
+
+Preferred Qualifications:
+Clearly labeled as "Bonus if you have..." - no pressure
+Eg: "Experience working with Webflow is a plus."
+
+Skills and Competencies:
+2-6 bullets for technical skills/tools
+2-6 bullets for key soft skills (stakeholder negotiation, agile teamwork)
+
+Salary & Benefits:
+[If user provided, state range. If missing, show researched data: "Estimated $XX,XXX–$YY,YYY (Glassdoor, Reddit)"]
+List 2-4 unique perks (e.g., "Unlimited paid time off," "Quarterly wellness retreats," "Home office stipend") in bullet points, may have more than 4 bullet points based on the research and/or user input
+
+Reporting Structure:
+"This role reports to: [Manager/Director/VP/etc.]."
+[If not specified, auto-benchmarked from LinkedIn/industry for similar titles — always state how this was determined.]
+
+Hiring Process:
+[Dynamically populated: pull user's real process if provided. If not, suggest a default, eg:]
+15-minute introductory call (screening)
+1-hour hiring manager interview (deep dive)
+Team/Skill Assessment or Portfolio Review (optional, only if practice in industry)
+Final culture/team call (optional, if company culture-focused)
+Offer stage — Fast, friendly communication throughout!
+
+"We encourage applications from candidates of all backgrounds. We're an Equal Opportunity Employer. If you need accommodations, just let us know!"
+
+[Important: Do not use any em dashes (—) or this symbol —. Use only hyphens or commas.]
+
+4. Output 2: LinkedIn Job Post (Super Engaging, Brief, Table-Free!)
+
+Write in company-benchmarked tone; max 3 sentences; emojis only if user's company page uses them.
+
+Laser focus on "this job's true impact" and 1-2 critical must-have requirements for quick filtering.
+
+Example:
+Join [Company]!
+We're hiring a [Job Title] to [top mission/impact]. If you thrive in [dynamic/innovative/collaborative] settings and have [must-have skill], let's talk!
+Apply today, help us shape the future.
+
+#Hiring #[JobTitle] #[Location] #[Industry]
+(Tag someone who'd excel at this!)
+
+5. Output 3: Introductory Call Questions (5 Max, Screening-Optimized, Quick-Weed)
+
+Tailored to the specific role and must-have requirements
+Each question is short, direct, and fits a 15-minute screening
+At least one "silent" disqualifier (ex: scheduling/remote setup, compensation, or non-negotiable cultural/technical fit)
+
+Example:
+Can you walk me through your experience with [core required skill]?
+What excites you about joining [Company] in this role?
+Tell me about a project where you [achieved a specific JD outcome].
+What are your salary expectations? [If not already discussed]
+[Disqualifier]: For remote roles, describe your typical setup and timezone. [Flag mismatches instantly.]
+
+6. Execution Safeguards & Customization Commands
+
+Automatic Tone Matching: Scrape and mimic company style and sentence structure from public web and social content.
+
+Bias and Accessibility Screening: Always run outputs through gender/inclusivity and legal bias checks. Never reference "aggressive," "native speaker," "must be young," etc; replace with neutral, inclusive alternatives.
+
+Salary Disclaimers: For all AI-generated salary bands, note "Estimates provided; confirm with HR."
+
+Reporting Line Identification: Use titles found for similar listed jobs on LinkedIn, check benchmarks, and cite "Based on industry research" when outputting reporting structure.
+
+Dynamic Outputs: All hiring process, reporting line, perks, and requirements fields are determined ≥90% by user input, else by AI audit of market standards for similar roles/companies.
+
+Section Skipping: Tell user "Type 'unknown' to skip (useful if you want an AI-optimized suggestion)."
+
+Customization: User may request: "Make JD more friendly/technical/brief," "Rewrite LinkedIn post for a formal audience," "Adjust key screening question focus," etc.
+
+Reminder:
+Never, under any circumstances, use em dashes — or this symbol — anywhere in the outputs, regardless of formatting or paraphrasing. Always use hyphens, commas, or other punctuation as appropriate.
+
+How to Use:
+Provide the inputs above. The system will auto-research, benchmark, and output a smart, compliant, and visually striking job description, LinkedIn post, and screening flow-ready for instant use, further refinement, or direct posting.`;
+    }
+
     document.addEventListener("DOMContentLoaded", async function () {
+      // Set the prompt text
+      setPromptText();
+      
+      // Setup copy button
+      setupCopyButton();
+      
       const name = getQueryParam("name");
       const greetingElement = document.getElementById("greeting");
-      const loaderElement = document.getElementById("loader");
-
-      if (!name) {
-        greetingElement.textContent = "Hello";
-        loaderElement.textContent = "";
-        return;
-      }
-
-      greetingElement.textContent = `Hi, one moment...`;
-      loaderElement.textContent = "Detecting your local time...";
-
+      
+      // Remove loader initially
+      greetingElement.innerHTML = "Hello";
+      
+      // Get timezone and weather
       let timezone = null;
-
+      let weatherCondition = null;
+      let userPosition = null;
+      
       try {
+        // Get location for weather
+        if (navigator.geolocation) {
+          userPosition = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          });
+        }
+        
+        // Get timezone from IP
         const res = await fetch("https://ipapi.co/json/");
         if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
         const data = await res.json();
         timezone = data.timezone;
-        console.log("Timezone from IP API:", timezone);
-      } catch (error) {
-        console.warn("Failed to get timezone from IP API, falling back to browser timezone.", error);
-        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
-        if (timezone) {
-          console.log("Fallback timezone from browser:", timezone);
-        } else {
-          console.warn("No timezone found in browser, using local system time.");
+        
+        // Get weather if we have position
+        if (userPosition) {
+          weatherCondition = await getWeather(
+            userPosition.coords.latitude, 
+            userPosition.coords.longitude
+          );
+          if (weatherCondition) {
+            setWeatherAnimation(weatherCondition);
+          }
         }
+      } catch (error) {
+        console.warn("Failed to get location data, using fallback:", error);
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
       }
-
-      loaderElement.textContent = "";
-
+      
       // Get hour based on detected/fallback timezone or local time
       const now = timezone
         ? new Date(new Date().toLocaleString("en-US", { timeZone: timezone }))
         : new Date();
+      
       const greeting = getGreeting(now.getHours());
-
-      // Compose greeting with typed name
-      greetingElement.textContent = greeting + " ";
-      const nameSpan = document.createElement("span");
-      greetingElement.appendChild(nameSpan);
-
-      await typeWriter(nameSpan, name, 120);
-
-      greetingElement.appendChild(document.createTextNode(","));
+      
+      // Compose greeting
+      if (name) {
+        greetingElement.textContent = greeting + " ";
+        const nameSpan = document.createElement("span");
+        nameSpan.style.fontWeight = "600";
+        nameSpan.style.color = "#4ecdc4";
+        greetingElement.appendChild(nameSpan);
+        await typeWriter(nameSpan, name, 120);
+        greetingElement.appendChild(document.createTextNode(","));
+      } else {
+        greetingElement.textContent = greeting + ",";
+      }
     });
   </script>
 </body>
