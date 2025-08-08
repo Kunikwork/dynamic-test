@@ -564,8 +564,8 @@
         // Then get weather from location
         // Using OpenWeatherMap API (example implementation)
         // You'll need to sign up for an API key at openweathermap.org
-        const apiKey = 'YOUR_OPENWEATHER_API_KEY';
-        if (!apiKey || apiKey === 'YOUR_OPENWEATHER_API_KEY') return null;
+        const apiKey = '1c5a7e065a020449577deaaa8d091a4d';
+        if (!apiKey || apiKey === '1c5a7e065a020449577deaaa8d091a4d') return null;
         
         const weatherRes = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${ipData.latitude}&lon=${ipData.longitude}&appid=${apiKey}&units=metric`
@@ -816,3 +816,4 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
   </script>
 </body>
 </html>
+
