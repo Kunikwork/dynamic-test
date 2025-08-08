@@ -13,6 +13,7 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       background: linear-gradient(135deg, #1a1c20, #24262b, #1d1f23);
       color: #f5f5f5;
@@ -24,6 +25,8 @@
       padding: 20px;
       background-attachment: fixed;
     }
+
+    /* Weather animations */
     .weather-animation {
       position: fixed;
       top: 0;
@@ -33,18 +36,22 @@
       pointer-events: none;
       z-index: -1;
     }
+
     @keyframes rain {
       0% { background-position: 0 0; }
       100% { background-position: 0 100%; }
     }
+
     @keyframes snow {
       0% { background-position: 0 0; }
       100% { background-position: 20px 100px; }
     }
+
     @keyframes wind {
       0% { transform: translateX(0); }
       100% { transform: translateX(20px); }
     }
+
     .weather-rain {
       position: fixed;
       top: 0;
@@ -56,6 +63,7 @@
       animation: rain 1s linear infinite;
       opacity: 0.5;
     }
+
     .weather-snow {
       position: fixed;
       top: 0;
@@ -67,6 +75,7 @@
       animation: snow 10s linear infinite;
       opacity: 0.5;
     }
+
     .weather-wind {
       position: fixed;
       top: 0;
@@ -78,6 +87,7 @@
       animation: wind 5s linear infinite;
       opacity: 0.3;
     }
+
     .weather-sunny {
       position: fixed;
       top: 0;
@@ -88,6 +98,8 @@
                   radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 20%);
       opacity: 0.2;
     }
+
+    /* Container */
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -95,6 +107,8 @@
       position: relative;
       z-index: 10;
     }
+
+    /* Header - Enhanced glass effect */
     header {
       text-align: center;
       margin-bottom: 40px;
@@ -109,14 +123,18 @@
       animation: fadeIn 0.8s ease-out;
       transition: all 0.4s ease;
     }
+
     header:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Gradient border effect - smoother animation */
     header::before {
       content: '';
       position: absolute;
@@ -125,6 +143,7 @@
       right: 0;
       bottom: 0;
       border-radius: 20px;
+      /* border: 2px solid transparent;*/
       background: linear-gradient(45deg, #8a2be2, #ff00ff, #4a90e2, #8a2be2) border-box;
       -webkit-mask: 
         linear-gradient(#fff 0 0) padding-box, 
@@ -135,11 +154,13 @@
       animation: borderAnimation 15s ease infinite;
       background-size: 300% 300%;
     }
+
     @keyframes borderAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     h1 {
       font-size: 3.2rem;
       margin-bottom: 15px;
@@ -151,6 +172,7 @@
       letter-spacing: -0.5px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
     #greeting {
       font-size: 2.2rem;
       margin-bottom: 20px;
@@ -162,6 +184,7 @@
       align-items: center;
       flex-wrap: wrap;
     }
+
     .name-gradient {
       background: linear-gradient(90deg, #8a2be2, #ff00ff, #4a90e2);
       -webkit-background-clip: text;
@@ -171,11 +194,13 @@
       animation: gradientAnimation 12s ease infinite;
       background-size: 300% 300%;
     }
+
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
     .subtitle {
       font-size: 1.3rem;
       max-width: 700px;
@@ -189,6 +214,8 @@
       backdrop-filter: blur(5px);
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
+
+    /* Prompt container */
     .prompt-container {
       background: rgba(20, 20, 30, 0.25);
       border-radius: 20px;
@@ -201,14 +228,17 @@
       animation: slideUp 0.8s ease-out;
       transition: all 0.4s ease;
     }
+
     .prompt-container:hover {
       transform: translateY(-3px);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
+
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     .prompt-header {
       display: flex;
       justify-content: space-between;
@@ -217,6 +247,7 @@
       padding-bottom: 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .prompt-title {
       font-size: 1.8rem;
       font-weight: 600;
@@ -225,10 +256,13 @@
       align-items: center;
       gap: 12px;
     }
+
     .prompt-title i {
       color: #8a2be2;
       font-size: 1.5rem;
     }
+
+    /* Copy button - Smoother gradient effect */
     #copy-button {
       background: linear-gradient(90deg, #8a2be2, #ff00ff, #4a90e2);
       background-size: 300% 300%;
@@ -248,18 +282,22 @@
       overflow: hidden;
       animation: gradientAnimation 12s ease infinite;
     }
+
     #copy-button:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
+
     #copy-button:active {
       transform: translateY(1px);
     }
+
     #copy-button.copied {
       background: linear-gradient(45deg, #4CAF50, #2E7D32);
       box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
       animation: none;
     }
+
     #copy-button.copied::after {
       content: 'Copied!';
       position: absolute;
@@ -272,6 +310,8 @@
       justify-content: center;
       background: rgba(46, 125, 50, 0.9);
     }
+
+    /* Prompt text */
     #prompt-text {
       background: rgba(10, 10, 20, 0.3);
       border-radius: 16px;
@@ -286,19 +326,24 @@
       white-space: pre-wrap;
       backdrop-filter: blur(5px);
     }
+
     #prompt-text::-webkit-scrollbar {
       width: 10px;
     }
+
     #prompt-text::-webkit-scrollbar-track {
       background: rgba(0, 0, 0, 0.1);
       border-radius: 10px;
     }
+
     #prompt-text::-webkit-scrollbar-thumb {
       background: linear-gradient(45deg, #8a2be2, #ff00ff, #4a90e2);
       border-radius: 10px;
       background-size: 300% 300%;
       animation: gradientAnimation 12s ease infinite;
     }
+
+    /* Prompt formatting */
     .prompt-section {
       color: #8a2be2;
       font-weight: 600;
@@ -306,6 +351,7 @@
       margin-bottom: 10px;
       display: block;
     }
+
     .prompt-subsection {
       color: #ff00ff;
       font-weight: 500;
@@ -313,10 +359,12 @@
       margin-bottom: 5px;
       display: block;
     }
+
     .prompt-highlight {
       color: #4a90e2;
       font-weight: 500;
     }
+
     .prompt-example {
       background: rgba(255, 255, 255, 0.05);
       padding: 10px 15px;
@@ -325,52 +373,67 @@
       display: block;
       border-left: 3px solid #8a2be2;
     }
+
     .prompt-important {
       color: #ff6b6b;
       font-weight: 600;
     }
+
+    /* Responsive design */
     @media (max-width: 768px) {
       h1 {
         font-size: 2.4rem;
       }
+      
       #greeting {
         font-size: 1.8rem;
       }
+      
       .prompt-container {
         padding: 20px;
       }
+      
       .prompt-header {
         flex-direction: column;
         gap: 20px;
         text-align: center;
       }
+      
       #prompt-text {
         padding: 20px;
         font-size: 0.98rem;
       }
+      
       #copy-button {
         width: 100%;
         justify-content: center;
       }
     }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 2rem;
       }
+      
       #greeting {
         font-size: 1.5rem;
       }
+      
       .subtitle {
         font-size: 1rem;
       }
+      
       .prompt-title {
         font-size: 1.5rem;
       }
     }
+
+    /* Loader */
     .loader {
       display: inline-block;
       margin-left: 10px;
     }
+
     .loader::after {
       content: "";
       display: inline-block;
@@ -381,6 +444,7 @@
       border-color: #f5f5f5 transparent #f5f5f5 transparent;
       animation: loader 1.2s linear infinite;
     }
+
     @keyframes loader {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -395,12 +459,14 @@
     <div class="weather-wind"></div>
     <div class="weather-sunny"></div>
   </div>
+  
   <div class="container">
     <header>
       <h1>Job Description Generator</h1>
       <div id="greeting">Hello<span class="loader"></span></div>
       <p class="subtitle">Create world-class job descriptions, LinkedIn promotions, and screening questions with AI precision</p>
     </header>
+    
     <main>
       <div class="prompt-container">
         <div class="prompt-header">
@@ -413,11 +479,13 @@
       </div>
     </main>
   </div>
+
   <script>
     // Get query parameter from URL
     function getQueryParam(key) {
       return new URLSearchParams(window.location.search).get(key);
     }
+
     // Determine greeting by local hour
     function getGreeting(hour) {
       if (hour >= 5 && hour < 12)    return "Good Morning";
@@ -425,14 +493,17 @@
       if (hour >= 18 && hour < 22)   return "Good Evening";
       return "Hello";
     }
+
     // Typewriter effect: type text inside an element, one char at a time
     async function typeWriter(element, text, speed = 120) {
       element.textContent = "";
       for (let i = 0; i < text.length; i++) {
         element.textContent += text.charAt(i);
+        // Wait before next char
         await new Promise(resolve => setTimeout(resolve, speed));
       }
     }
+
     // Format prompt text with styling
     function formatPromptText() {
       const promptText = document.getElementById('prompt-text');
@@ -585,16 +656,22 @@ Never, under any circumstances, use em dashes — or this symbol — anywhere in
 
 <span class="prompt-section">How to Use:</span>
 Provide the inputs above. The system will auto-research, benchmark, and output a smart, compliant, and visually striking job description, LinkedIn post, and screening flow-ready for instant use, further refinement, or direct posting.`;
+
       promptText.innerHTML = content;
     }
+
     // Copy button functionality
     function setupCopyButton() {
       const copyButton = document.getElementById('copy-button');
       const promptText = document.getElementById('prompt-text');
+      
       copyButton.addEventListener('click', async () => {
         try {
+          // Get text without HTML tags
           const textToCopy = promptText.innerText;
           await navigator.clipboard.writeText(textToCopy);
+          
+          // Visual feedback
           copyButton.classList.add('copied');
           setTimeout(() => {
             copyButton.classList.remove('copied');
@@ -605,34 +682,57 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
         }
       });
     }
+
     document.addEventListener("DOMContentLoaded", async function () {
+      // Format the prompt text
       formatPromptText();
+      
+      // Setup copy button
       setupCopyButton();
+      
       const name = getQueryParam("name");
       const greetingElement = document.getElementById("greeting");
       
-      // Get current hour using local time (no IP detection)
-      const now = new Date();
-      const hour = now.getHours();
-      const greeting = getGreeting(hour);
+      // Get timezone
+      let timezone = null;
       
-      // FIXED: Add space between greeting and name
+      try {
+        // Get location and timezone from IP
+        const res = await fetch("https://ipapi.co/json/");
+        if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
+        const data = await res.json();
+        timezone = data.timezone;
+      } catch (error) {
+        console.warn("Failed to get location data, using fallback:", error);
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+      }
+      
+      // Get hour based on detected/fallback timezone or local time
+      const now = timezone
+        ? new Date(new Date().toLocaleString("en-US", { timeZone: timezone }))
+        : new Date();
+      
+      const greeting = getGreeting(now.getHours());
+      
+      // Compose greeting
       if (name) {
-        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>";
+        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>,";
         const nameSpan = greetingElement.querySelector('.name-gradient');
         await typeWriter(nameSpan, name, 120);
       } else {
-        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>";
+        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>,";
       }
       
       // Show a random weather animation
       const animations = ['weather-rain', 'weather-snow', 'weather-wind', 'weather-sunny'];
       const randomIndex = Math.floor(Math.random() * animations.length);
       const selectedAnimation = animations[randomIndex];
+      
       // Hide all animations first
       document.querySelectorAll('.weather-rain, .weather-snow, .weather-wind, .weather-sunny').forEach(el => {
         el.style.display = 'none';
       });
+      
       // Show the selected animation
       document.querySelector(`.${selectedAnimation}`).style.display = 'block';
     });
