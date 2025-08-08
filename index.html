@@ -35,90 +35,68 @@
       height: 100%;
       pointer-events: none;
       z-index: -1;
-      opacity: 0.1;
     }
 
-    /* Sunny */
-    .sunny .sun {
-      position: absolute;
-      top: 20%;
-      right: 15%;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, #ffeb3b, transparent 70%);
-      border-radius: 50%;
-      box-shadow: 0 0 50px #ff9800;
-      animation: sunGlow 4s infinite alternate;
+    @keyframes rain {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
     }
 
-    @keyframes sunGlow {
-      0% { box-shadow: 0 0 50px #ff9800; }
-      100% { box-shadow: 0 0 80px #ffeb3b, 0 0 100px #ff9800; }
+    @keyframes snow {
+      0% { background-position: 0 0; }
+      100% { background-position: 20px 100px; }
     }
 
-    /* Rainy */
-    .rainy .rain {
-      position: absolute;
+    @keyframes wind {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(20px); }
+    }
+
+    .weather-rain {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: transparent;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="100" viewBox="0 0 20 100"><line x1="10" y1="0" x2="10" y2="100" stroke="rgba(148, 163, 184, 0.1)" stroke-width="1"/></svg>');
+      background-size: 20px 100px;
+      animation: rain 1s linear infinite;
+      opacity: 0.5;
     }
 
-    .rainy .drop {
-      position: absolute;
-      top: -20px;
-      width: 2px;
-      height: 20px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-      animation: rainFall 1.5s linear infinite;
-    }
-
-    @keyframes rainFall {
-      to { transform: translateY(100vh); }
-    }
-
-    /* Snowy */
-    .snowy .snowflake {
-      position: absolute;
-      top: -20px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 24px;
-      animation: snowFall 8s linear infinite;
-    }
-
-    @keyframes snowFall {
-      to { transform: translateY(100vh) rotate(360deg); }
-    }
-
-    /* Cloudy */
-    .cloudy .cloud {
-      position: absolute;
-      background: rgba(200, 200, 200, 0.15);
-      border-radius: 50%;
-      animation: cloudMove 30s linear infinite;
-    }
-
-    @keyframes cloudMove {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100vw); }
-    }
-
-    /* Windy */
-    .windy .wind {
-      position: absolute;
+    .weather-snow {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      animation: windBlow 3s linear infinite;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="1.5" fill="rgba(200, 200, 255, 0.2)"/></svg>');
+      background-size: 40px 40px;
+      animation: snow 10s linear infinite;
+      opacity: 0.5;
     }
 
-    @keyframes windBlow {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+    .weather-wind {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="20" viewBox="0 0 100 20"><path d="M0,10 Q25,5 50,10 T100,10" stroke="rgba(148, 163, 184, 0.1)" stroke-width="1" fill="none"/></svg>');
+      background-size: 100px 20px;
+      animation: wind 5s linear infinite;
+      opacity: 0.3;
+    }
+
+    .weather-sunny {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.05) 0%, transparent 20%),
+                  radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 20%);
+      opacity: 0.2;
     }
 
     /* Container */
@@ -126,6 +104,8 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
+      position: relative;
+      z-index: 10;
     }
 
     /* Header */
@@ -133,7 +113,7 @@
       text-align: center;
       margin-bottom: 40px;
       padding: 40px 20px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(12px);
@@ -189,7 +169,7 @@
 
     /* Prompt container */
     .prompt-container {
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 20px;
       padding: 30px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -348,6 +328,9 @@
       color: #aaa;
       margin-top: 20px;
       animation: fadeIn 1s ease-out;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
     }
 
     footer p {
@@ -439,7 +422,12 @@
 </head>
 <body>
   <!-- Weather animation container -->
-  <div class="weather-animation" id="weather-animation"></div>
+  <div class="weather-animation">
+    <div class="weather-rain"></div>
+    <div class="weather-snow"></div>
+    <div class="weather-wind"></div>
+    <div class="weather-sunny"></div>
+  </div>
   
   <div class="container">
     <header>
@@ -490,96 +478,6 @@
         element.textContent += text.charAt(i);
         // Wait before next char
         await new Promise(resolve => setTimeout(resolve, speed));
-      }
-    }
-
-    // Set weather animation based on condition
-    function setWeatherAnimation(condition) {
-      const animationEl = document.getElementById('weather-animation');
-      animationEl.className = 'weather-animation';
-      
-      // Clear any existing elements
-      animationEl.innerHTML = '';
-      
-      // Add animation based on condition
-      if (condition === 'Rain') {
-        animationEl.classList.add('rainy');
-        for (let i = 0; i < 80; i++) {
-          const drop = document.createElement('div');
-          drop.className = 'drop';
-          drop.style.left = `${Math.random() * 100}%`;
-          drop.style.animationDelay = `${Math.random() * 2}s`;
-          drop.style.animationDuration = `${0.5 + Math.random() * 1}s`;
-          animationEl.appendChild(drop);
-        }
-      } 
-      else if (condition === 'Snow') {
-        animationEl.classList.add('snowy');
-        const snowflakes = ['❄', '❅', '❆'];
-        for (let i = 0; i < 60; i++) {
-          const flake = document.createElement('div');
-          flake.className = 'snowflake';
-          flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-          flake.style.left = `${Math.random() * 100}%`;
-          flake.style.animationDelay = `${Math.random() * 5}s`;
-          flake.style.fontSize = `${10 + Math.random() * 20}px`;
-          flake.style.opacity = 0.3 + Math.random() * 0.7;
-          animationEl.appendChild(flake);
-        }
-      } 
-      else if (condition === 'Clear') {
-        animationEl.classList.add('sunny');
-        const sun = document.createElement('div');
-        sun.className = 'sun';
-        animationEl.appendChild(sun);
-      } 
-      else if (condition === 'Clouds') {
-        animationEl.classList.add('cloudy');
-        for (let i = 0; i < 7; i++) {
-          const cloud = document.createElement('div');
-          cloud.className = 'cloud';
-          cloud.style.top = `${20 + Math.random() * 60}%`;
-          cloud.style.width = `${100 + Math.random() * 200}px`;
-          cloud.style.height = `${60 + Math.random() * 40}px`;
-          cloud.style.animationDelay = `${Math.random() * 10}s`;
-          animationEl.appendChild(cloud);
-        }
-      } 
-      else if (condition === 'Wind') {
-        animationEl.classList.add('windy');
-        const wind = document.createElement('div');
-        wind.className = 'wind';
-        animationEl.appendChild(wind);
-      }
-    }
-
-    // Get weather data based on IP address
-    async function getWeatherFromIP() {
-      try {
-        // First get location from IP
-        const ipRes = await fetch("https://ipapi.co/json/");
-        if (!ipRes.ok) throw new Error("IP API failed");
-        const ipData = await ipRes.json();
-        
-        // Then get weather from location
-        // Using OpenWeatherMap API (example implementation)
-        // You'll need to sign up for an API key at openweathermap.org
-        const apiKey = '1c5a7e065a020449577deaaa8d091a4d';
-        if (!apiKey || apiKey === '1c5a7e065a020449577deaaa8d091a4d') return null;
-        
-        const weatherRes = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${ipData.latitude}&lon=${ipData.longitude}&appid=${apiKey}&units=metric`
-        );
-        
-        if (!weatherRes.ok) {
-          throw new Error(`Weather API responded with status ${weatherRes.status}`);
-        }
-        
-        const weatherData = await weatherRes.json();
-        return weatherData.weather[0].main;
-      } catch (error) {
-        console.error('Error getting weather:', error);
-        return null;
       }
     }
 
@@ -772,9 +670,8 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       const name = getQueryParam("name");
       const greetingElement = document.getElementById("greeting");
       
-      // Get timezone and weather
+      // Get timezone
       let timezone = null;
-      let weatherCondition = null;
       
       try {
         // Get location and timezone from IP
@@ -782,12 +679,6 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
         if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
         const data = await res.json();
         timezone = data.timezone;
-        
-        // Get weather condition from IP-based location
-        weatherCondition = await getWeatherFromIP();
-        if (weatherCondition) {
-          setWeatherAnimation(weatherCondition);
-        }
       } catch (error) {
         console.warn("Failed to get location data, using fallback:", error);
         timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
@@ -812,8 +703,20 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       } else {
         greetingElement.textContent = greeting + ",";
       }
+      
+      // Show a random weather animation
+      const animations = ['weather-rain', 'weather-snow', 'weather-wind', 'weather-sunny'];
+      const randomIndex = Math.floor(Math.random() * animations.length);
+      const selectedAnimation = animations[randomIndex];
+      
+      // Hide all animations first
+      document.querySelectorAll('.weather-rain, .weather-snow, .weather-wind, .weather-sunny').forEach(el => {
+        el.style.display = 'none';
+      });
+      
+      // Show the selected animation
+      document.querySelector(`.${selectedAnimation}`).style.display = 'block';
     });
   </script>
 </body>
 </html>
-
