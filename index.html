@@ -610,42 +610,21 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       setupCopyButton();
       const name = getQueryParam("name");
       const greetingElement = document.getElementById("greeting");
-      // Get timezone
-      let timezone = null;
-      try {
-        // Try IP API first
-        const res = await fetch("https://ipapi.co/json/");
-        if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
-        const data = await res.json();
-        timezone = data.timezone;
-        // Make sure timezone is a valid string
-        if (!timezone || typeof timezone !== 'string' || !timezone.includes('/')) {
-          timezone = null;
-        }
-      } catch (error) {
-        console.warn("Failed to get location data, using fallback:", error);
-        try {
-          timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          if (!timezone || typeof timezone !== 'string' || !timezone.includes('/')) {
-            timezone = null;
-          }
-        } catch {
-          timezone = null;
-        }
-      }
-      // Get hour based on detected/fallback timezone or local time
-      const now = timezone
-        ? new Date(new Date().toLocaleString("en-US", { timeZone: timezone }))
-        : new Date();
-      const greeting = getGreeting(now.getHours());
-      // ADD SPACE BETWEEN GREETING AND NAME
+      
+      // Get current hour using local time (no IP detection)
+      const now = new Date();
+      const hour = now.getHours();
+      const greeting = getGreeting(hour);
+      
+      // FIXED: Add space between greeting and name
       if (name) {
-        greetingElement.innerHTML = greeting + " " + "<span class='name-gradient'></span>,";
+        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>";
         const nameSpan = greetingElement.querySelector('.name-gradient');
         await typeWriter(nameSpan, name, 120);
       } else {
-        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>,";
+        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>";
       }
+      
       // Show a random weather animation
       const animations = ['weather-rain', 'weather-snow', 'weather-wind', 'weather-sunny'];
       const randomIndex = Math.floor(Math.random() * animations.length);
@@ -660,5 +639,3 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
   </script>
 </body>
 </html>
-
-
