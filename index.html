@@ -1,530 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Job Description Generator with Weather</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --bg-color: #37393d;
-            --text-color: #f5f5f5;
-            --accent-color: #6366f1;
-            --card-bg: #2d2f33;
-            --border-color: #4a4c52;
-            --success-color: #10b981;
-            --weather-bg: rgba(45, 47, 51, 0.8);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Weather Animation Test</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #37393d;
+    color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .weather-widget {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(45,47,51,0.8);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .weather-widget.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .weather-icon {
+    font-size: 1.8rem;
+  }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
-                        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px;
-            border-radius: 12px;
-            background: rgba(45, 47, 51, 0.6);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #8b5cf6, #6366f1, #4f46e5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .greeting {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #e2e8f0;
-        }
-
-        .prompt-container {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .prompt-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, #8b5cf6, #6366f1, #4f46e5);
-        }
-
-        .prompt-content {
-            white-space: pre-wrap;
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #cbd5e1;
-            font-weight: 300;
-        }
-
-        .copy-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .copy-btn {
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .copy-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
-        }
-
-        .copy-btn:active {
-            transform: translateY(1px);
-        }
-
-        .copy-btn.copied {
-            background: linear-gradient(90deg, #10b981, #059669);
-        }
-
-        .copy-btn .icon {
-            transition: transform 0.3s ease;
-        }
-
-        .copy-btn:hover .icon {
-            transform: translateX(3px);
-        }
-
-        .copy-btn .check-icon {
-            position: absolute;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.3s ease;
-        }
-
-        .copy-btn.copied .copy-icon {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        .copy-btn.copied .check-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .weather-widget {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--weather-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.5s ease;
-        }
-
-        .weather-widget.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .weather-icon {
-            font-size: 1.5rem;
-        }
-
-        .loader {
-            text-align: center;
-            padding: 20px;
-            font-style: italic;
-            color: #94a3b8;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            .greeting {
-                font-size: 1.5rem;
-            }
-            .prompt-container {
-                padding: 20px;
-            }
-            .copy-btn {
-                padding: 12px 24px;
-                font-size: 1rem;
-            }
-            .weather-widget {
-                top: 10px;
-                right: 10px;
-                padding: 10px;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Weather animations */
-        @keyframes rain {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
-        }
-
-        @keyframes snow {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 100px; }
-        }
-
-        @keyframes wind {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(20px); }
-        }
-
-        .weather-rain {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="100" viewBox="0 0 20 100"><line x1="10" y1="0" x2="10" y2="100" stroke="rgba(148, 163, 184, 0.3)" stroke-width="1"/></svg>');
-            background-size: 20px 100px;
-            animation: rain 1s linear infinite;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.5;
-            display: none;
-        }
-
-        .weather-snow {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="2" fill="rgba(148, 163, 184, 0.5)"/></svg>');
-            background-size: 40px 40px;
-            animation: snow 10s linear infinite;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.5;
-            display: none;
-        }
-
-        .weather-wind {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="20" viewBox="0 0 100 20"><path d="M0,10 Q25,5 50,10 T100,10" stroke="rgba(148, 163, 184, 0.3)" stroke-width="1" fill="none"/></svg>');
-            background-size: 100px 20px;
-            animation: wind 5s linear infinite;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.3;
-            display: none;
-        }
-
-        .weather-sunny {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.1) 0%, transparent 20%),
-                        radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 20%);
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.2;
-            display: none;
-        }
-    </style>
+  /* Animations */
+  @keyframes rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+  @keyframes snow {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 100px; }
+  }
+  @keyframes wind {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20px); }
+  }
+  .weather-rain,
+  .weather-snow,
+  .weather-wind,
+  .weather-sunny {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+    display: none; /* Hide initially */
+  }
+  .weather-rain {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="100" viewBox="0 0 20 100"><line x1="10" y1="0" x2="10" y2="100" stroke="rgba(148,163,184,0.3)" stroke-width="1"/></svg>') repeat;
+    background-size: 20px 100px;
+    animation: rain 1s linear infinite;
+  }
+  .weather-snow {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="2" fill="rgba(148,163,184,0.5)"/></svg>') repeat;
+    background-size: 40px 40px;
+    animation: snow 10s linear infinite;
+  }
+  .weather-wind {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="20" viewBox="0 0 100 20"><path d="M0,10 Q25,5 50,10 T100,10" stroke="rgba(148,163,184,0.3)" stroke-width="1" fill="none"/></svg>') repeat;
+    background-size: 100px 20px;
+    animation: wind 5s linear infinite;
+    opacity: 0.3;
+  }
+  .weather-sunny {
+    background: radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 20%);
+    opacity: 0.2;
+  }
+</style>
 </head>
 <body>
-    <div class="weather-rain"></div>
-    <div class="weather-snow"></div>
-    <div class="weather-wind"></div>
-    <div class="weather-sunny"></div>
-    
-    <div class="weather-widget">
-        <span class="weather-icon">🌤️</span>
-        <span class="weather-text">Loading weather...</span>
-    </div>
 
-    <div class="container">
-        <header>
-            <h1>Job Description Generator</h1>
-            <div class="greeting" id="greeting">Good Morning</div>
-        </header>
+<div class="weather-rain"></div>
+<div class="weather-snow"></div>
+<div class="weather-wind"></div>
+<div class="weather-sunny"></div>
 
-        <div class="prompt-container">
-            <div class="prompt-content" id="prompt-content"></div>
-        </div>
+<div class="weather-widget" id="weather-widget" aria-live="polite" role="region">
+  <span class="weather-icon" id="weather-icon">🌤️</span>
+  <span id="weather-text">Loading weather...</span>
+</div>
 
-        <div class="copy-container">
-            <button class="copy-btn" id="copy-btn">
-                <span class="copy-text">Copy Prompt</span>
-                <span class="icon copy-icon">📋</span>
-                <span class="icon check-icon">✓</span>
-            </button>
-        </div>
-    </div>
+<script>
+  async function fetchWeatherAndAnimate() {
+    const widget = document.getElementById('weather-widget');
+    const iconElem = document.getElementById('weather-icon');
+    const textElem = document.getElementById('weather-text');
 
-    <div class="loader" id="loader">Loading personalized greeting...</div>
+    try {
+      // Get user location from ipapi.co
+      const ipResponse = await fetch('https://ipapi.co/json/');
+      if (!ipResponse.ok) throw new Error('Failed to get IP location');
+      const ipData = await ipResponse.json();
+      const { latitude, longitude } = ipData;
+      if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+        throw new Error('Invalid location data');
+      }
 
-    <script>
-        // Utility to get query param "name"
-        function getQueryParam(key) {
-            return new URLSearchParams(window.location.search).get(key);
-        }
+      // Query Open-Meteo current weather
+      const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+      const weatherResponse = await fetch(weatherURL);
+      if (!weatherResponse.ok) throw new Error('Failed to get weather data');
+      const weatherData = await weatherResponse.json();
+      if (!weatherData.current_weather) throw new Error('No current weather data');
 
-        // Return greeting string from hour of day
-        function getGreeting(hour) {
-            if (hour >= 5 && hour < 12) return "Good Morning";
-            if (hour >= 12 && hour < 18) return "Good Afternoon";
-            if (hour >= 18 && hour < 22) return "Good Evening";
-            return "Hello";
-        }
+      const code = weatherData.current_weather.weathercode;
+      const temperature = Math.round(weatherData.current_weather.temperature);
 
-        // TypeWriter to animate text typing
-        async function typeWriter(element, text, speed = 50) {
-            element.textContent = "";
-            for (let i = 0; i < text.length; i++) {
-                element.textContent += text.charAt(i);
-                await new Promise(res => setTimeout(res, speed + Math.random() * 30));
-            }
-        }
+      // Map weathercode to icon and animation type
+      const weatherMap = {
+        0: { icon: '☀️', animation: 'sunny', label: 'Clear' },
+        1: { icon: '⛅', animation: 'sunny', label: 'Mainly Clear' },
+        2: { icon: '🌤️', animation: 'sunny', label: 'Partly Cloudy' },
+        3: { icon: '☁️', animation: 'sunny', label: 'Overcast' },
+        45: { icon: '🌫️', animation: 'wind', label: 'Fog' },
+        48: { icon: '🌫️', animation: 'wind', label: 'Depositing Rime Fog' },
+        51: { icon: '🌦️', animation: 'rain', label: 'Light Drizzle' },
+        53: { icon: '🌦️', animation: 'rain', label: 'Drizzle' },
+        55: { icon: '🌦️', animation: 'rain', label: 'Dense Drizzle' },
+        56: { icon: '🌧️', animation: 'rain', label: 'Light Freezing Drizzle' },
+        57: { icon: '🌧️', animation: 'rain', label: 'Dense Freezing Drizzle' },
+        61: { icon: '🌧️', animation: 'rain', label: 'Slight Rain' },
+        63: { icon: '🌧️', animation: 'rain', label: 'Rain' },
+        65: { icon: '🌧️', animation: 'rain', label: 'Heavy Rain' },
+        66: { icon: '🌧️', animation: 'rain', label: 'Light Freezing Rain' },
+        67: { icon: '🌧️', animation: 'rain', label: 'Heavy Freezing Rain' },
+        71: { icon: '❄️', animation: 'snow', label: 'Slight Snow Fall' },
+        73: { icon: '❄️', animation: 'snow', label: 'Snow Fall' },
+        75: { icon: '❄️', animation: 'snow', label: 'Heavy Snow Fall' },
+        77: { icon: '❄️', animation: 'snow', label: 'Snow Grains' },
+        80: { icon: '🌧️', animation: 'rain', label: 'Slight Rain Showers' },
+        81: { icon: '🌧️', animation: 'rain', label: 'Rain Showers' },
+        82: { icon: '🌧️', animation: 'rain', label: 'Heavy Rain Showers' },
+        85: { icon: '❄️', animation: 'snow', label: 'Slight Snow Showers' },
+        86: { icon: '❄️', animation: 'snow', label: 'Heavy Snow Showers' },
+        95: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm' },
+        96: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm with Slight Hail' },
+        99: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm with Heavy Hail' }
+      };
 
-        // Show weather animation based on one of four types
-        function showWeatherAnimation(type) {
-            document.querySelectorAll('.weather-rain, .weather-snow, .weather-wind, .weather-sunny')
-                .forEach(el => el.style.display = 'none');
-            if (type === 'rain') {
-                document.querySelector('.weather-rain').style.display = 'block';
-            } else if (type === 'snow') {
-                document.querySelector('.weather-snow').style.display = 'block';
-            } else if (type === 'wind') {
-                document.querySelector('.weather-wind').style.display = 'block';
-            } else if (type === 'sunny') {
-                document.querySelector('.weather-sunny').style.display = 'block';
-            }
-        }
+      const weatherInfo = weatherMap[code] || { icon: '🌤️', animation: 'sunny', label: 'Unknown Weather' };
 
-        // Fetch weather from open-meteo and show animation + widget
-        async function fetchWeather() {
-            try {
-                // Get user location from IPAPI
-                const ipRes = await fetch('https://ipapi.co/json/');
-                if (!ipRes.ok) throw new Error('IP location API error');
-                const ipData = await ipRes.json();
-                const lat = ipData.latitude;
-                const lon = ipData.longitude;
+      // Update widget UI
+      iconElem.textContent = weatherInfo.icon;
+      textElem.textContent = `${temperature}°C, ${weatherInfo.label}`;
+      widget.classList.add('visible');
 
-                if (typeof lat !== 'number' || typeof lon !== 'number') {
-                    throw new Error('Invalid location data from IPAPI');
-                }
+      // Show corresponding animation and hide others
+      const allowedTypes = ['rain', 'snow', 'wind', 'sunny'];
+      allowedTypes.forEach(type => {
+        const el = document.querySelector('.weather-' + type);
+        if (el) el.style.display = 'none';
+      });
+      const activeAnim = document.querySelector('.weather-' + weatherInfo.animation);
+      if (activeAnim) activeAnim.style.display = 'block';
 
-                // Fetch current weather from Open-Meteo API
-                const weatherRes = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
-                );
-                if (!weatherRes.ok) throw new Error('Open-Meteo API error');
-                const weatherData = await weatherRes.json();
+    } catch (error) {
+      console.error('Weather fetch error:', error);
+      widget.style.display = 'none';
 
-                if (!weatherData.current_weather) throw new Error('No current weather data');
+      // Hide all animations on error
+      ['rain','snow','wind','sunny'].forEach(type => {
+        const el = document.querySelector('.weather-' + type);
+        if (el) el.style.display = 'none';
+      });
+    }
+  }
 
-                const code = weatherData.current_weather.weathercode;
-                const temp = Math.round(weatherData.current_weather.temperature);
-
-                // Map weather codes to icons and descriptive text
-                const weatherMap = {
-                    0: {icon: '☀️', text: 'Clear'},
-                    1: {icon: '⛅', text: 'Mainly Clear'},
-                    2: {icon: '🌤️', text: 'Partly Cloudy'},
-                    3: {icon: '☁️', text: 'Overcast'},
-                    45: {icon: '🌫️', text: 'Fog'},
-                    48: {icon: '🌫️', text: 'Depositing Rime Fog'},
-                    51: {icon: '🌦️', text: 'Light Drizzle'},
-                    53: {icon: '🌦️', text: 'Drizzle'},
-                    55: {icon: '🌦️', text: 'Dense Drizzle'},
-                    56: {icon: '🌧️', text: 'Light Freezing Drizzle'},
-                    57: {icon: '🌧️', text: 'Dense Freezing Drizzle'},
-                    61: {icon: '🌧️', text: 'Slight Rain'},
-                    63: {icon: '🌧️', text: 'Rain'},
-                    65: {icon: '🌧️', text: 'Heavy Rain'},
-                    66: {icon: '🌧️', text: 'Light Freezing Rain'},
-                    67: {icon: '🌧️', text: 'Heavy Freezing Rain'},
-                    71: {icon: '❄️', text: 'Slight Snow Fall'},
-                    73: {icon: '❄️', text: 'Snow Fall'},
-                    75: {icon: '❄️', text: 'Heavy Snow Fall'},
-                    77: {icon: '❄️', text: 'Snow Grains'},
-                    80: {icon: '🌧️', text: 'Slight Rain Showers'},
-                    81: {icon: '🌧️', text: 'Rain Showers'},
-                    82: {icon: '🌧️', text: 'Heavy Rain Showers'},
-                    85: {icon: '❄️', text: 'Slight Snow Showers'},
-                    86: {icon: '❄️', text: 'Heavy Snow Showers'},
-                    95: {icon: '⛈️', text: 'Thunderstorm'},
-                    96: {icon: '⛈️', text: 'Thunderstorm with Slight Hail'},
-                    99: {icon: '⛈️', text: 'Thunderstorm with Heavy Hail'}
-                };
-
-                const info = weatherMap[code] || {icon: '🌤️', text: 'Unknown Weather'};
-
-                // Update widget
-                const widget = document.querySelector('.weather-widget');
-                widget.querySelector('.weather-icon').textContent = info.icon;
-                widget.querySelector('.weather-text').textContent = `${temp}°C, ${info.text}`;
-                widget.classList.add('visible');
-
-                // Determine and show animation
-                let animType = 'sunny'; // default
-                if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) animType = 'rain';
-                else if ([71,73,75,77,85,86].includes(code)) animType = 'snow';
-                else if ([95,96,99].includes(code)) animType = 'wind';
-                else if ([0,1,2,3].includes(code)) animType = 'sunny';
-
-                showWeatherAnimation(animType);
-
-            } catch (error) {
-                // On error, hide widget and animations
-                console.warn('Weather fetch error:', error);
-                const widget = document.querySelector('.weather-widget');
-                widget.style.display = 'none';
-                document.querySelectorAll('.weather-rain, .weather-snow, .weather-wind, .weather-sunny')
-                    .forEach(el => el.style.display = 'none');
-            }
-        }
-
-        // Setup copy button for prompt
-        function setupCopyButton() {
-            const copyBtn = document.getElementById('copy-btn');
-            copyBtn.addEventListener('click', async () => {
-                const promptText = document.getElementById('prompt-content').textContent;
-                try {
-                    await navigator.clipboard.writeText(promptText);
-                    copyBtn.classList.add('copied');
-                    copyBtn.querySelector('.copy-text').textContent = 'Copied!';
-                    setTimeout(() => {
-                        copyBtn.classList.remove('copied');
-                        copyBtn.querySelector('.copy-text').textContent = 'Copy Prompt';
-                    }, 2000);
-                } catch (e) {
-                    console.error('Copy failed', e);
-                }
-            });
-        }
-
-        // On DOM ready
-        document.addEventListener('DOMContentLoaded', async () => {
-            const name = getQueryParam('name');
-            const greetingEl = document.getElementById('greeting');
-            const loaderEl = document.getElementById('loader');
-
-            // Set prompt content (your original prompt text truncated here for brevity)
-            const promptText = `Purpose:
-
-This all-in-one prompt will guide you through a seamless process to produce world-class job descriptions... (rest of prompt text here as in your original code)`;
-
-            document.getElementById('prompt-content').textContent = promptText;
-
-            setupCopyButton();
-            fetchWeather();
-
-            if (!name) {
-                const now = new Date();
-                greetingEl.textContent = getGreeting(now.getHours());
-                loaderEl.textContent = "";
-                return;
-            }
-
-            greetingEl.textContent = `Hi, one moment...`;
-            loaderEl.textContent = `Detecting your local time...`;
-
-            let timezone = null;
-
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                if (!res.ok) throw new Error(`ipapi.co status ${res.status}`);
-                const data = await res.json();
-                timezone = data.timezone;
-            } catch {
-                timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            }
-
-            loaderEl.textContent = "";
-
-            const dateNow = timezone
-                ? new Date(new Date().toLocaleString('en-US', { timeZone: timezone }))
-                : new Date();
-
-            const greet = getGreeting(dateNow.getHours());
-            greetingEl.textContent = greet + " ";
-            const nameSpan = document.createElement('span');
-            nameSpan.style.color = '#8b5cf6';
-            nameSpan.style.fontWeight = '700';
-            greetingEl.appendChild(nameSpan);
-
-            await typeWriter(nameSpan, name, 100);
-            greetingEl.appendChild(document.createTextNode(","));
-        });
-    </script>
+  // Call fetchWeatherAndAnimate on page load
+  window.addEventListener('load', () => {
+    fetchWeatherAndAnimate();
+  });
+</script>
 </body>
 </html>
