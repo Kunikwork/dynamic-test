@@ -720,7 +720,7 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
         const nameSpan = greetingElement.querySelector('.name-gradient');
         await typeWriter(nameSpan, name, 120);
       } else {
-        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + " </span>,";
+                greetingElement.innerHTML = "&nbsp;<span class='name-gradient'>" + name + " </span>,";
       }
       
       // Show a random weather animation
@@ -739,4 +739,5 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
   </script>
 </body>
 </html>
+
 
