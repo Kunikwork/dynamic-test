@@ -1,193 +1,735 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Weather Animation Test</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #37393d;
-    color: #f5f5f5;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  .weather-widget {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(45,47,51,0.8);
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1.1rem;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .weather-widget.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .weather-icon {
-    font-size: 1.8rem;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Description Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #37393d;
+            --text-color: #f5f5f5;
+            --accent-color: #6366f1;
+            --card-bg: #2d2f33;
+            --border-color: #4a4c52;
+            --success-color: #10b981;
+            --weather-color: rgba(255, 255, 255, 0.1);
+            --section-color: #8b5cf6;
+            --subsection-color: #6366f1;
+            --highlight-color: #10b981;
+        }
 
-  /* Animations */
-  @keyframes rain {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100%; }
-  }
-  @keyframes snow {
-    0% { background-position: 0 0; }
-    100% { background-position: 20px 100px; }
-  }
-  @keyframes wind {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(20px); }
-  }
-  .weather-rain,
-  .weather-snow,
-  .weather-wind,
-  .weather-sunny {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.5;
-    display: none; /* Hide initially */
-  }
-  .weather-rain {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="100" viewBox="0 0 20 100"><line x1="10" y1="0" x2="10" y2="100" stroke="rgba(148,163,184,0.3)" stroke-width="1"/></svg>') repeat;
-    background-size: 20px 100px;
-    animation: rain 1s linear infinite;
-  }
-  .weather-snow {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="2" fill="rgba(148,163,184,0.5)"/></svg>') repeat;
-    background-size: 40px 40px;
-    animation: snow 10s linear infinite;
-  }
-  .weather-wind {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="20" viewBox="0 0 100 20"><path d="M0,10 Q25,5 50,10 T100,10" stroke="rgba(148,163,184,0.3)" stroke-width="1" fill="none"/></svg>') repeat;
-    background-size: 100px 20px;
-    animation: wind 5s linear infinite;
-    opacity: 0.3;
-  }
-  .weather-sunny {
-    background: radial-gradient(circle at 10% 20%, rgba(251, 191, 36, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 20%);
-    opacity: 0.2;
-  }
-</style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(45, 47, 51, 0.6);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .greeting {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+        }
+
+        .header-copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .header-copy-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header-copy-btn.copied {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .prompt-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prompt-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1, #4f46e5);
+        }
+
+        .prompt-content {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+
+        .prompt-title {
+            color: var(--section-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .prompt-section {
+            margin-bottom: 25px;
+        }
+
+        .prompt-section-title {
+            color: var(--subsection-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            display: block;
+        }
+
+        .prompt-list {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .prompt-list li {
+            margin-bottom: 8px;
+            list-style: none;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .prompt-list li:before {
+            content: "•";
+            color: var(--highlight-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .prompt-highlight {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .prompt-note {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .copy-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        .copy-btn:active {
+            transform: translateY(1px);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .copy-btn .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .copy-btn:hover .icon {
+            transform: translateX(3px);
+        }
+
+        .copy-btn .check-icon {
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn.copied .copy-icon {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .copy-btn.copied .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .weather-widget {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(45, 47, 51, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .weather-widget.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .weather-icon {
+            font-size: 1.5rem;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .greeting {
+                font-size: 1.5rem;
+            }
+            
+            .prompt-container {
+                padding: 20px;
+            }
+            
+            .copy-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .weather-widget {
+                top: 10px;
+                right: 10px;
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+
+            .header-copy-btn {
+                position: static;
+                margin-top: 15px;
+            }
+        }
+
+        /* Weather animations */
+        @keyframes rain {
+            0% { transform: translateY(-100px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(calc(100vh + 100px)); opacity: 0; }
+        }
+
+        @keyframes snow {
+            0% { transform: translateY(-100px) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(calc(100vh + 100px)) translateX(50px); opacity: 1; }
+        }
+
+        @keyframes clouds {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes sunny-pulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+        }
+
+        .weather-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .weather-effect.active {
+            opacity: 1;
+        }
+
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(148, 163, 184, 0.6));
+            animation: rain 1.5s linear infinite;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            animation: snow 8s linear infinite;
+        }
+
+        .cloud {
+            position: absolute;
+            color: rgba(200, 200, 200, 0.3);
+            font-size: 60px;
+            animation: clouds 20s linear infinite;
+        }
+
+        .sunny-bg {
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 40%);
+            animation: sunny-pulse 4s ease-in-out infinite;
+        }
+    </style>
 </head>
 <body>
+    <div class="weather-effect" id="weatherEffect"></div>
+    
+    <div class="weather-widget">
+        <span class="weather-icon">🌤️</span>
+        <span class="weather-text">Loading weather...</span>
+    </div>
 
-<div class="weather-rain"></div>
-<div class="weather-snow"></div>
-<div class="weather-wind"></div>
-<div class="weather-sunny"></div>
+    <div class="container">
+        <header>
+            <h1>Job Description Generator</h1>
+            <div class="greeting" id="greeting">Good Morning</div>
+            <button class="header-copy-btn" id="header-copy-btn">
+                <span>📋</span>
+                <span class="copy-text">Copy</span>
+            </button>
+        </header>
 
-<div class="weather-widget" id="weather-widget" aria-live="polite" role="region">
-  <span class="weather-icon" id="weather-icon">🌤️</span>
-  <span id="weather-text">Loading weather...</span>
-</div>
+        <div class="prompt-container">
+            <div class="prompt-content" id="prompt-content"></div>
+        </div>
 
-<script>
-  async function fetchWeatherAndAnimate() {
-    const widget = document.getElementById('weather-widget');
-    const iconElem = document.getElementById('weather-icon');
-    const textElem = document.getElementById('weather-text');
+        <div class="copy-container">
+            <button class="copy-btn" id="copy-btn">
+                <span class="copy-text">Copy Full Prompt</span>
+                <span class="icon copy-icon">📋</span>
+                <span class="icon check-icon">✓</span>
+            </button>
+        </div>
+    </div>
 
-    try {
-      // Get user location from ipapi.co
-      const ipResponse = await fetch('https://ipapi.co/json/');
-      if (!ipResponse.ok) throw new Error('Failed to get IP location');
-      const ipData = await ipResponse.json();
-      const { latitude, longitude } = ipData;
-      if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-        throw new Error('Invalid location data');
-      }
+    <div class="loader" id="loader">Loading personalized greeting...</div>
 
-      // Query Open-Meteo current weather
-      const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
-      const weatherResponse = await fetch(weatherURL);
-      if (!weatherResponse.ok) throw new Error('Failed to get weather data');
-      const weatherData = await weatherResponse.json();
-      if (!weatherData.current_weather) throw new Error('No current weather data');
+    <script>
+        // Get query parameter from URL
+        function getQueryParam(key) {
+            return new URLSearchParams(window.location.search).get(key);
+        }
 
-      const code = weatherData.current_weather.weathercode;
-      const temperature = Math.round(weatherData.current_weather.temperature);
+        // Determine greeting by local hour
+        function getGreeting(hour) {
+            if (hour >= 5 && hour < 12) return "Good Morning";
+            if (hour >= 12 && hour < 18) return "Good Afternoon";
+            if (hour >= 18 && hour < 22) return "Good Evening";
+            return "Hello";
+        }
 
-      // Map weathercode to icon and animation type
-      const weatherMap = {
-        0: { icon: '☀️', animation: 'sunny', label: 'Clear' },
-        1: { icon: '⛅', animation: 'sunny', label: 'Mainly Clear' },
-        2: { icon: '🌤️', animation: 'sunny', label: 'Partly Cloudy' },
-        3: { icon: '☁️', animation: 'sunny', label: 'Overcast' },
-        45: { icon: '🌫️', animation: 'wind', label: 'Fog' },
-        48: { icon: '🌫️', animation: 'wind', label: 'Depositing Rime Fog' },
-        51: { icon: '🌦️', animation: 'rain', label: 'Light Drizzle' },
-        53: { icon: '🌦️', animation: 'rain', label: 'Drizzle' },
-        55: { icon: '🌦️', animation: 'rain', label: 'Dense Drizzle' },
-        56: { icon: '🌧️', animation: 'rain', label: 'Light Freezing Drizzle' },
-        57: { icon: '🌧️', animation: 'rain', label: 'Dense Freezing Drizzle' },
-        61: { icon: '🌧️', animation: 'rain', label: 'Slight Rain' },
-        63: { icon: '🌧️', animation: 'rain', label: 'Rain' },
-        65: { icon: '🌧️', animation: 'rain', label: 'Heavy Rain' },
-        66: { icon: '🌧️', animation: 'rain', label: 'Light Freezing Rain' },
-        67: { icon: '🌧️', animation: 'rain', label: 'Heavy Freezing Rain' },
-        71: { icon: '❄️', animation: 'snow', label: 'Slight Snow Fall' },
-        73: { icon: '❄️', animation: 'snow', label: 'Snow Fall' },
-        75: { icon: '❄️', animation: 'snow', label: 'Heavy Snow Fall' },
-        77: { icon: '❄️', animation: 'snow', label: 'Snow Grains' },
-        80: { icon: '🌧️', animation: 'rain', label: 'Slight Rain Showers' },
-        81: { icon: '🌧️', animation: 'rain', label: 'Rain Showers' },
-        82: { icon: '🌧️', animation: 'rain', label: 'Heavy Rain Showers' },
-        85: { icon: '❄️', animation: 'snow', label: 'Slight Snow Showers' },
-        86: { icon: '❄️', animation: 'snow', label: 'Heavy Snow Showers' },
-        95: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm' },
-        96: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm with Slight Hail' },
-        99: { icon: '⛈️', animation: 'wind', label: 'Thunderstorm with Heavy Hail' }
-      };
+        // Typewriter effect
+        async function typeWriter(element, text, speed = 50) {
+            element.textContent = "";
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text.charAt(i);
+                await new Promise(resolve => setTimeout(resolve, speed + Math.random() * 30));
+            }
+        }
 
-      const weatherInfo = weatherMap[code] || { icon: '🌤️', animation: 'sunny', label: 'Unknown Weather' };
+        // Weather icons
+        const weatherIcons = {
+            'clear': '☀️',
+            'clouds': '☁️',
+            'rain': '🌧️',
+            'drizzle': '🌦️',
+            'thunderstorm': '⛈️',
+            'snow': '❄️',
+            'mist': '🌫️',
+            'smoke': '💨',
+            'haze': '🌫️',
+            'dust': '💨',
+            'fog': '🌫️',
+            'sand': '💨',
+            'ash': '🌋',
+            'squall': '💨',
+            'tornado': '🌪️'
+        };
 
-      // Update widget UI
-      iconElem.textContent = weatherInfo.icon;
-      textElem.textContent = `${temperature}°C, ${weatherInfo.label}`;
-      widget.classList.add('visible');
+        // Create weather animation
+        function createWeatherAnimation(condition) {
+            const effectContainer = document.getElementById('weatherEffect');
+            effectContainer.innerHTML = '';
+            effectContainer.classList.remove('active');
 
-      // Show corresponding animation and hide others
-      const allowedTypes = ['rain', 'snow', 'wind', 'sunny'];
-      allowedTypes.forEach(type => {
-        const el = document.querySelector('.weather-' + type);
-        if (el) el.style.display = 'none';
-      });
-      const activeAnim = document.querySelector('.weather-' + weatherInfo.animation);
-      if (activeAnim) activeAnim.style.display = 'block';
+            setTimeout(() => {
+                if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('thunderstorm')) {
+                    // Create rain effect
+                    for (let i = 0; i < 50; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'raindrop';
+                        drop.style.left = Math.random() * 100 + '%';
+                        drop.style.animationDelay = Math.random() * 2 + 's';
+                        drop.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+                        effectContainer.appendChild(drop);
+                    }
+                } else if (condition.includes('snow')) {
+                    // Create snow effect
+                    for (let i = 0; i < 30; i++) {
+                        const flake = document.createElement('div');
+                        flake.className = 'snowflake';
+                        flake.innerHTML = '❄';
+                        flake.style.left = Math.random() * 100 + '%';
+                        flake.style.animationDelay = Math.random() * 8 + 's';
+                        flake.style.fontSize = (10 + Math.random() * 20) + 'px';
+                        effectContainer.appendChild(flake);
+                    }
+                } else if (condition.includes('cloud') || condition.includes('mist') || condition.includes('fog')) {
+                    // Create cloud effect
+                    for (let i = 0; i < 5; i++) {
+                        const cloud = document.createElement('div');
+                        cloud.className = 'cloud';
+                        cloud.innerHTML = '☁';
+                        cloud.style.top = Math.random() * 50 + '%';
+                        cloud.style.animationDelay = Math.random() * 20 + 's';
+                        cloud.style.animationDuration = (15 + Math.random() * 10) + 's';
+                        effectContainer.appendChild(cloud);
+                    }
+                } else if (condition.includes('clear')) {
+                    // Create sunny effect
+                    const sunny = document.createElement('div');
+                    sunny.className = 'sunny-bg';
+                    effectContainer.appendChild(sunny);
+                }
 
-    } catch (error) {
-      console.error('Weather fetch error:', error);
-      widget.style.display = 'none';
+                effectContainer.classList.add('active');
+            }, 100);
+        }
 
-      // Hide all animations on error
-      ['rain','snow','wind','sunny'].forEach(type => {
-        const el = document.querySelector('.weather-' + type);
-        if (el) el.style.display = 'none';
-      });
-    }
-  }
+        // Fetch weather using multiple fallback methods
+        async function fetchWeather() {
+            const weatherWidget = document.querySelector('.weather-widget');
+            const weatherText = document.querySelector('.weather-text');
+            const weatherIcon = document.querySelector('.weather-icon');
 
-  // Call fetchWeatherAndAnimate on page load
-  window.addEventListener('load', () => {
-    fetchWeatherAndAnimate();
-  });
-</script>
-</body>
-</html>
+            try {
+                // Method 1: Try IP-based geolocation APIs
+                let weatherData = null;
+                
+                // Try multiple IP geolocation services
+                const geoAPIs = [
+                    { url: 'https://ipapi.co/json/', parser: (data) => ({ lat: data.latitude, lon: data.longitude, city: data.city }) },
+                    { url: 'https://api.ipify.org?format=json', parser: async (data) => {
+                        const geoRes = await fetch(`https://ipwho.is/${data.ip}`);
+                        const geoData = await geoRes.json();
+                        return { lat: geoData.latitude, lon: geoData.longitude, city: geoData.city };
+                    }},
+                    { url: 'https://api.ipgeolocation.io/ipgeo?apiKey=9e5c4b8f3a794ba5a96b0e9f95d6c3b4', parser: (data) => ({ lat: data.latitude, lon: data.longitude, city: data.city }) }
+                ];
+
+                let location = null;
+                for (const api of geoAPIs) {
+                    try {
+                        const response = await fetch(api.url);
+                        if (response.ok) {
+                            const data = await response.json();
+                            location = await api.parser(data);
+                            if (location && location.lat && location.lon) {
+                                console.log('Got location from:', api.url);
+                                break;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Failed to get location from:', api.url);
+                    }
+                }
+
+                // If we have location, fetch weather
+                if (location && location.lat && location.lon) {
+                    // Try OpenWeatherMap
+                    try {
+                        const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&units=metric&appid=ef10619f671bb551743f5ae6630769ec`);
+                        if (weatherRes.ok) {
+                            weatherData = await weatherRes.json();
+                        }
+                    } catch (e) {
+                        console.warn('OpenWeatherMap failed');
+                    }
+
+                    // Fallback: Try wttr.in
+                    if (!weatherData && location.city) {
+                        try {
+                            const wttrRes = await fetch(`https://wttr.in/${location.city}?format=j1`);
+                            if (wttrRes.ok) {
+                                const wttrData = await wttrRes.json();
+                                weatherData = {
+                                    weather: [{ main: wttrData.current_condition[0].weatherDesc[0].value.toLowerCase(), description: wttrData.current_condition[0].weatherDesc[0].value }],
+                                    main: { temp: parseFloat(wttrData.current_condition[0].temp_C) }
+                                };
+                            }
+                        } catch (e) {
+                            console.warn('wttr.in failed');
+                        }
+                    }
+                }
+
+                // Display weather if we have data
+                if (weatherData) {
+                    const condition = weatherData.weather[0].main.toLowerCase();
+                    const icon = weatherIcons[condition] || '🌤️';
+                    
+                    weatherIcon.textContent = icon;
+                    weatherText.textContent = `${Math.round(weatherData.main.temp)}°C, ${weatherData.weather[0].description}`;
+                    weatherWidget.classList.add('visible');
+                    
+                    // Create weather animation
+                    createWeatherAnimation(condition);
+                } else {
+                    // Default weather display
+                    weatherIcon.textContent = '🌤️';
+                    weatherText.textContent = 'Weather unavailable';
+                    weatherWidget.classList.add('visible');
+                }
+            } catch (error) {
+                console.warn("Could not fetch weather data:", error);
+                weatherIcon.textContent = '🌤️';
+                weatherText.textContent = 'Weather unavailable';
+                weatherWidget.classList.add('visible');
+            }
+        }
+
+        // Format prompt with proper styling
+        function formatPrompt() {
+            const promptContent = document.getElementById('prompt-content');
+            
+            const formattedHTML = `
+                <span class="prompt-title">Purpose:</span>
+                <p>This all-in-one prompt will guide you through a seamless process to produce world-class job descriptions, LinkedIn job promotions, and first-round candidate screening questions. The system will automatically research, benchmark, and generate outputs tailored to your company, role, and hiring needs, ensuring inclusivity, legal compliance, and standout clarity. No detail or blind spot is left unaddressed.</p>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">1. User Input Workflow (Conversational & Modular)</span>
+                    <p>Request this information up-front, giving helpful examples and allowing "unknown" for any optional item. Explain to the user that the more provided, the more tailored and unique the outcome.</p>
+                    
+                    <ul class="prompt-list">
+                        <li><span class="prompt-highlight">Company Name</span> (required)</li>
+                        <li><span class="prompt-highlight">Company Website</span> (required for branding/tone research)</li>
+                        <li><span class="prompt-highlight">Job Title</span> (required; example: "Senior Product Designer", not "Design Guru")</li>
+                        <li><span class="prompt-highlight">Location</span> (required; Remote, specify timezone, Hybrid, days/week & location, On-site, city/state/country)</li>
+                        <li><span class="prompt-highlight">Must-Have Qualifications / Experience / Skills</span> (highly recommended, not mandatory)</li>
+                        <li>Nice-to-Have (Preferred) Skills / Experience (optional)</li>
+                        <li>Reporting Structure (optional, who does this role report to?)</li>
+                        <li>Team Details (optional, size, focus, energy)</li>
+                        <li>Salary Range (optional; if missing, AI benchmarks will auto-fill)</li>
+                        <li>Unique Perks, Benefits, or Cultural Elements (optional but can be a powerful attractor)</li>
+                        <li>Any critical requirements or deal-breakers? (optional; used for filtering)</li>
+                    </ul>
+
+                    <div class="prompt-note">
+                        If any input is missing, the assistant will use advanced multi-platform research to autofill gaps and clearly state "Estimated based on [sources]. Please verify for accuracy."
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">2. Dynamic Research Protocol (Runs Automatically)</span>
+                    <ul class="prompt-list">
+                        <li><span class="prompt-highlight">Scrape Company Channels:</span> Mirror copy, sentence length, and tone/branding from "About Us," "Culture," and recent news/Careers content.</li>
+                        <li><span class="prompt-highlight">Salary Benchmarking:</span> Collate data from Glassdoor, Payscale, Indeed, Levels.fyi (for tech roles), public Reddit threads, plus industry-wide benchmarks.</li>
+                        <li><span class="prompt-highlight">Culture & Sentiment Check:</span> Aggregate real insights from Reddit/Blind/LinkedIn.</li>
+                        <li><span class="prompt-highlight">Competitive Market Comparison:</span> Review 3 top LinkedIn job posts for attention-catching phrases.</li>
+                        <li><span class="prompt-highlight">Reporting Structure Guess:</span> Auto-benchmark using LinkedIn and industry standards if not specified.</li>
+                    </ul>
+                </div>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">3. Output 1: Dynamic, Inclusive Job Description</span>
+                    
+                    <p><strong>Enforced Rules:</strong></p>
+                    <ul class="prompt-list">
+                        <li>Never use any em dashes</li>
+                        <li>Max 15 words per sentence. No paragraph over 3 lines.</li>
+                        <li>Short, easy-to-read, accessible sentences. No jargon without explanation.</li>
+                        <li>Bias, gender, and ADA checks applied for clarity and legal compliance.</li>
+                        <li>Bold section headers for impact.</li>
+                    </ul>
+
+                    <p><strong>Section Flow:</strong></p>
+                    <ul class="prompt-list">
+                        <li><span class="prompt-highlight">Company:</span> [Dynamic from user company name]</li>
+                        <li><span class="prompt-highlight">Job Title:</span> [Dynamic from user, no jargon]</li>
+                        <li><span class="prompt-highlight">Location:</span> [Remote, Hybrid, or On-site + details]</li>
+                        <li><span class="prompt-highlight">About Us:</span> Two-sentence overview mirroring company's tone</li>
+                        <li><span class="prompt-highlight">Your Impact:</span> Why this job matters, team context, success metrics</li>
+                        <li><span class="prompt-highlight">Key Responsibilities:</span> 4-8 bullet points with action verbs, focused on outcomes</li>
+                        <li><span class="prompt-highlight">Required Qualifications:</span> Only essentials for on-the-job success</li>
+                        <li><span class="prompt-highlight">Preferred Qualifications:</span> Clearly labeled as "Bonus if you have..."</li>
+                        <li><span class="prompt-highlight">Skills and Competencies:</span> Technical skills and soft skills</li>
+                        <li><span class="prompt-highlight">Salary & Benefits:</span> Range with sources, unique perks listed</li>
+                        <li><span class="prompt-highlight">Reporting Structure:</span> Manager/Director/VP level specified</li>
+                        <li><span class="prompt-highlight">Hiring Process:</span> Clear steps from screening to offer</li>
+                    </ul>
+
+                    <div class="prompt-note">
+                        "We encourage applications from candidates of all backgrounds. We're an Equal Opportunity Employer. If you need accommodations, just let us know!"
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">4. Output 2: LinkedIn Job Post (Super Engaging, Brief)</span>
+                    <p>Write in company-benchmarked tone; max 3 sentences; emojis only if company uses them.</p>
+                    
+                    <p><strong>Example:</strong></p>
+                    <div class="prompt-note">
+                        Join [Company]!<br>
+                        We're hiring a [Job Title] to [top mission/impact]. If you thrive in [dynamic/innovative/collaborative] settings and have [must-have skill], let's talk!<br>
+                        Apply today, help us shape the future.<br>
+                        #Hiring #[JobTitle] #[Location] #[Industry]<br>
+                        (Tag someone who'd excel at this!)
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">5. Output 3: Introductory Call Questions (5 Max)</span>
+                    <p>Tailored to specific role and must-have requirements. Each question is short, direct, and fits a 15-minute screening.</p>
+                    
+                    <p><strong>Example Questions:</strong></p>
+                    <ul class="prompt-list">
+                        <li>Can you walk me through your experience with [core required skill]?</li>
+                        <li>What excites you about joining [Company] in this role?</li>
+                        <li>Tell me about a project where you [achieved a specific JD outcome].</li>
+                        <li>What are your salary expectations?</li>
+                        <li>[Disqualifier]: For remote roles, describe your typical setup and timezone.</li>
+                    </ul>
+                </div>
+
+                <div class="prompt-section">
+                    <span class="prompt-section-title">6. Execution Safeguards & Customization Commands</span>
+                    <ul class="prompt-list">
+                        <li><span class="prompt-highlight">Automatic Tone Matching:</span> Scrape and mimic company style from public content</li>
+                        <li><span class="prompt-highlight">Bias and Accessibility Screening:</span> Always run outputs through inclusivity checks</li>
+                        <li><span class="prompt-highlight">Salary Disclaimers:</span> Note "Estimates provided; confirm with HR" for AI-generated bands</li>
+                        <li><span class="prompt-highlight">Dynamic Outputs:</span> Determined by user input or AI audit of market standards</li>
+                        <li><span class="prompt-highlight">Customization:</span> User may request tone adjustments (friendly/technical/brief)</li>
+                    </ul>
+                </div>
+
+                <div class="prompt-note" style="margin-top: 30px;">
