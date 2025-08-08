@@ -183,6 +183,7 @@
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
+      gap: 0.5rem; /* Add space between elements */
     }
 
     .name-gradient {
@@ -683,6 +684,45 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       });
     }
 
+    // Enhanced IP detection with fallbacks
+    async function getTimezone() {
+      try {
+        // Try ipapi.co first (remove extra spaces in URL)
+        const res1 = await fetch("https://ipapi.co/json/");
+        if (res1.ok) {
+          const data = await res1.json();
+          if (data.timezone) return data.timezone;
+        }
+      } catch (error) {
+        console.warn("ipapi.co failed:", error);
+      }
+
+      try {
+        // Try ipgeolocation.io as backup
+        const res2 = await fetch("https://api.ipgeolocation.io/timezone?apiKey=7c860389231d440b852035401018616a");
+        if (res2.ok) {
+          const data = await res2.json();
+          if (data.timezone) return data.timezone;
+        }
+      } catch (error) {
+        console.warn("ipgeolocation.io failed:", error);
+      }
+
+      try {
+        // Try ip-api.com as another backup
+        const res3 = await fetch("http://ip-api.com/json/?fields=status,message,timezone", { mode: 'cors' });
+        if (res3.ok) {
+          const data = await res3.json();
+          if (data.status === 'success' && data.timezone) return data.timezone;
+        }
+      } catch (error) {
+        console.warn("ip-api.com failed:", error);
+      }
+
+      // Final fallback to browser timezone
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+    }
+
     document.addEventListener("DOMContentLoaded", async function () {
       // Format the prompt text
       formatPromptText();
@@ -693,34 +733,41 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       const name = getQueryParam("name");
       const greetingElement = document.getElementById("greeting");
       
-      // Get timezone
-      let timezone = null;
+      // Get timezone with enhanced detection
+      let timezone = await getTimezone();
       
-      try {
-        // Get location and timezone from IP
-        const res = await fetch("https://ipapi.co/json/");
-        if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
-        const data = await res.json();
-        timezone = data.timezone;
-      } catch (error) {
-        console.warn("Failed to get location data, using fallback:", error);
-        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
-      }
-      
-      // Get hour based on detected/fallback timezone or local time
+      // Get hour based on detected timezone or local time
       const now = timezone
         ? new Date(new Date().toLocaleString("en-US", { timeZone: timezone }))
         : new Date();
       
       const greeting = getGreeting(now.getHours());
       
-      // Compose greeting
+      // Compose greeting with proper spacing
       if (name) {
-        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>,";
-        const nameSpan = greetingElement.querySelector('.name-gradient');
+        // Create elements with proper spacing
+        const greetingText = document.createElement('span');
+        greetingText.textContent = greeting;
+        
+        const spacer = document.createTextNode(' '); // Proper space
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'name-gradient';
+        
+        const comma = document.createTextNode(','); // Comma after name
+        
+        // Clear existing content and append new elements
+        greetingElement.innerHTML = '';
+        greetingElement.appendChild(greetingText);
+        greetingElement.appendChild(spacer);
+        greetingElement.appendChild(nameSpan);
+        greetingElement.appendChild(comma);
+        
+        // Type the name
         await typeWriter(nameSpan, name, 120);
       } else {
-        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>,";
+        // No name provided, just show greeting
+        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>";
       }
       
       // Show a random weather animation
