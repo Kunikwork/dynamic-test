@@ -8,62 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
 
-//*--- Animated ✦ favicon gradient script start --- */
-      <script>
-const size = 32;
-const canvas = document.createElement('canvas');
-canvas.width = size; canvas.height = size;
-const ctx = canvas.getContext('2d');
-
-function drawFavicon(phase) {
-  ctx.clearRect(0, 0, size, size);
-
-  // Animate between purple (hue 280) and blue (hue 210)
-  const t = (Math.sin(phase) + 1) / 2;
-  const startHue = 280, endHue = 210;
-  const hue = startHue * (1 - t) + endHue * t;
-  const nextHue = endHue * t + startHue * (1 - t);
-
-  // Create gradient fill
-  const gradient = ctx.createRadialGradient(
-    size / 2, size / 2, 1,
-    size / 2, size / 2, size / 2
-  );
-  gradient.addColorStop(0, `hsl(${hue},100%,60%)`);
-  gradient.addColorStop(1, `hsl(${nextHue},90%,56%)`);
-
-  ctx.fillStyle = '#fff'; // optional white background
-  ctx.fillRect(0, 0, size, size);
-
-  ctx.font = '24px serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = gradient;
-  ctx.fillText('✦', size / 2, size / 2 + 2);
-}
-
-function setFavicon() {
-  let old = document.getElementById('favicon');
-  if (old) old.remove();
-  const link = document.createElement('link');
-  link.id = 'favicon';
-  link.rel = 'icon';
-  link.type = 'image/png';
-  link.href = canvas.toDataURL('image/png');
-  document.head.appendChild(link);
-}
-
-function animate(time) {
-  drawFavicon(time / 1200);
-  setFavicon();
-  requestAnimationFrame(animate);
-}
-animate(0);
-    </script>
-
-//*--- Animated ✦ favicon gradient script end --- */
-
-    
+   
     /* Base styles */
     * {
       margin: 0;
@@ -840,7 +785,71 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       // Show the selected animation
       document.querySelector(`.${selectedAnimation}`).style.display = 'block';
     });
+
+
+
+
+
+
+//*--- Animated ✦ favicon gradient script start --- */
+const size = 32;
+const canvas = document.createElement('canvas');
+canvas.width = size; canvas.height = size;
+const ctx = canvas.getContext('2d');
+
+function drawFavicon(phase) {
+  ctx.clearRect(0, 0, size, size);
+
+  // Animate between purple (hue 280) and blue (hue 210)
+  const t = (Math.sin(phase) + 1) / 2;
+  const startHue = 280, endHue = 210;
+  const hue = startHue * (1 - t) + endHue * t;
+  const nextHue = endHue * t + startHue * (1 - t);
+
+  // Create gradient fill
+  const gradient = ctx.createRadialGradient(
+    size / 2, size / 2, 1,
+    size / 2, size / 2, size / 2
+  );
+  gradient.addColorStop(0, `hsl(${hue},100%,60%)`);
+  gradient.addColorStop(1, `hsl(${nextHue},90%,56%)`);
+
+  ctx.fillStyle = '#fff'; // optional white background
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.font = '24px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = gradient;
+  ctx.fillText('✦', size / 2, size / 2 + 2);
+}
+
+function setFavicon() {
+  let old = document.getElementById('favicon');
+  if (old) old.remove();
+  const link = document.createElement('link');
+  link.id = 'favicon';
+  link.rel = 'icon';
+  link.type = 'image/png';
+  link.href = canvas.toDataURL('image/png');
+  document.head.appendChild(link);
+}
+
+function animate(time) {
+  drawFavicon(time / 1200);
+  setFavicon();
+  requestAnimationFrame(animate);
+}
+animate(0);
+
+//*--- Animated ✦ favicon gradient script end --- */
+
+
+
+
+    
   </script>
 </body>
 </html>
+
 
