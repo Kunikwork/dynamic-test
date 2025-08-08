@@ -716,11 +716,11 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       
       // Compose greeting
       if (name) {
-        greetingElement.innerHTML = greeting  + " <span class='name-gradient'></span>,";
+        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>,";
         const nameSpan = greetingElement.querySelector('.name-gradient');
         await typeWriter(nameSpan, name, 120);
       } else {
-                greetingElement.innerHTML = "&nbsp;<span class='name-gradient'>" + name + " </span>,";
+        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>,";
       }
       
       // Show a random weather animation
@@ -739,5 +739,3 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
   </script>
 </body>
 </html>
-
-
