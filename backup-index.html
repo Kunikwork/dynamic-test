@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic Greeting</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 10%; }
+    h1 { font-size: 2.5rem; }
+    .loader { margin-top: 2rem; font-style: italic; color: gray; }
+  </style>
+</head>
+<body>
+  <h1 id="greeting">Hello</h1>
+  <div class="loader" id="loader"></div>
 
+  <script>
+    // Get query parameter from URL
+    function getQueryParam(key) {
+      return new URLSearchParams(window.location.search).get(key);
+    }
+
+    // Determine greeting by local hour
+    function getGreeting(hour) {
+      if (hour >= 5 && hour < 12)    return "Good Morning";
+      if (hour >= 12 && hour < 18)   return "Good Afternoon";
+      if (hour >= 18 && hour < 22)   return "Good Evening";
+      return "Hello";
+    }
+
+    // Typewriter effect: type text inside an element, one char at a time
+    async function typeWriter(element, text, speed = 120) {
+      element.textContent = "";
+      for (let i = 0; i < text.length; i++) {
+        element.textContent += text.charAt(i);
+        // Wait before next char
+        await new Promise(resolve => setTimeout(resolve, speed));
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const name = getQueryParam("name");
+      const greetingElement = document.getElementById("greeting");
+      const loaderElement = document.getElementById("loader");
+
+      if (!name) {
+        greetingElement.textContent = "Hello";
+        loaderElement.textContent = "";
+        return;
+      }
+
+      greetingElement.textContent = `Hi, one moment...`;
+      loaderElement.textContent = "Detecting your local time...";
+
+      let timezone = null;
+
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        if (!res.ok) throw new Error(`ipapi.co responded with status ${res.status}`);
+        const data = await res.json();
+        timezone = data.timezone;
+        console.log("Timezone from IP API:", timezone);
+      } catch (error) {
+        console.warn("Failed to get timezone from IP API, falling back to browser timezone.", error);
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+        if (timezone) {
+          console.log("Fallback timezone from browser:", timezone);
+        } else {
+          console.warn("No timezone found in browser, using local system time.");
+        }
+      }
+
+      loaderElement.textContent = "";
+
+      // Get hour based on detected/fallback timezone or local time
+      const now = timezone
+        ? new Date(new Date().toLocaleString("en-US", { timeZone: timezone }))
+        : new Date();
+      const greeting = getGreeting(now.getHours());
+
+      // Compose greeting with typed name
+      greetingElement.textContent = greeting + " ";
+      const nameSpan = document.createElement("span");
+      greetingElement.appendChild(nameSpan);
+
+      await typeWriter(nameSpan, name, 120);
+
+      greetingElement.appendChild(document.createTextNode(","));
+    });
+  </script>
+</body>
+</html>
