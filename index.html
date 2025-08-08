@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Job Description Generator</title>
+  <title>Job Description Generator</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -15,7 +15,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #2d2f33, #37393d, #2a2c30);
+      background: linear-gradient(135deg, #1a1c20, #24262b, #1d1f23);
       color: #f5f5f5;
       font-family: 'Poppins', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       line-height: 1.7;
@@ -108,19 +108,25 @@
       z-index: 10;
     }
 
-    /* Header */
+    /* Header - Enhanced glass effect */
     header {
       text-align: center;
       margin-bottom: 40px;
-      padding: 40px 20px;
-      background: rgba(0, 0, 0, 0.3);
+      padding: 40px 30px;
+      background: rgba(20, 20, 30, 0.25);
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(15px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.8s ease-out;
+      transition: all 0.4s ease;
+    }
+
+    header:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
 
     @keyframes fadeIn {
@@ -128,18 +134,35 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Gradient border effect - smoother animation */
     header::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #556270);
+      right: 0;
+      bottom: 0;
+      border-radius: 20px;
+      /* border: 2px solid transparent;*/
+      background: linear-gradient(45deg, #8a2be2, #ff00ff, #4a90e2, #8a2be2) border-box;
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) padding-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      z-index: -1;
+      animation: borderAnimation 15s ease infinite;
+      background-size: 300% 300%;
+    }
+
+    @keyframes borderAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 3.2rem;
       margin-bottom: 15px;
       font-weight: 700;
       background: linear-gradient(90deg, #f5f5f5, #d4d4d4);
@@ -151,33 +174,64 @@
     }
 
     #greeting {
-      font-size: 1.8rem;
+      font-size: 2.2rem;
       margin-bottom: 20px;
-      font-weight: 300;
+      font-weight: 400;
       color: #d4d4d4;
       min-height: 2.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .name-gradient {
+      background: linear-gradient(90deg, #8a2be2, #ff00ff, #4a90e2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
+      animation: gradientAnimation 12s ease infinite;
+      background-size: 300% 300%;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .subtitle {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       max-width: 700px;
       margin: 0 auto;
       color: #d4d4d4;
       font-weight: 300;
       line-height: 1.8;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px 25px;
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     /* Prompt container */
     .prompt-container {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(20, 20, 30, 0.25);
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(15px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
       margin-bottom: 30px;
       animation: slideUp 0.8s ease-out;
+      transition: all 0.4s ease;
+    }
+
+    .prompt-container:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
 
     @keyframes slideUp {
@@ -204,13 +258,14 @@
     }
 
     .prompt-title i {
-      color: #4ecdc4;
+      color: #8a2be2;
       font-size: 1.5rem;
     }
 
-    /* Copy button */
+    /* Copy button - Smoother gradient effect */
     #copy-button {
-      background: linear-gradient(45deg, #556270, #4ecdc4);
+      background: linear-gradient(90deg, #8a2be2, #ff00ff, #4a90e2);
+      background-size: 300% 300%;
       color: white;
       border: none;
       padding: 14px 28px;
@@ -222,15 +277,15 @@
       align-items: center;
       gap: 12px;
       transition: all 0.3s ease;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      animation: gradientAnimation 12s ease infinite;
     }
 
     #copy-button:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      background: linear-gradient(45deg, #4ecdc4, #556270);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
 
     #copy-button:active {
@@ -240,6 +295,7 @@
     #copy-button.copied {
       background: linear-gradient(45deg, #4CAF50, #2E7D32);
       box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+      animation: none;
     }
 
     #copy-button.copied::after {
@@ -257,7 +313,7 @@
 
     /* Prompt text */
     #prompt-text {
-      background: rgba(10, 10, 10, 0.3);
+      background: rgba(10, 10, 20, 0.3);
       border-radius: 16px;
       padding: 30px;
       max-height: 500px;
@@ -268,6 +324,7 @@
       color: #f0f0f0;
       border: 1px solid rgba(255, 255, 255, 0.05);
       white-space: pre-wrap;
+      backdrop-filter: blur(5px);
     }
 
     #prompt-text::-webkit-scrollbar {
@@ -280,13 +337,15 @@
     }
 
     #prompt-text::-webkit-scrollbar-thumb {
-      background: linear-gradient(45deg, #556270, #4ecdc4);
+      background: linear-gradient(45deg, #8a2be2, #ff00ff, #4a90e2);
       border-radius: 10px;
+      background-size: 300% 300%;
+      animation: gradientAnimation 12s ease infinite;
     }
 
     /* Prompt formatting */
     .prompt-section {
-      color: #4ecdc4;
+      color: #8a2be2;
       font-weight: 600;
       margin-top: 20px;
       margin-bottom: 10px;
@@ -294,7 +353,7 @@
     }
 
     .prompt-subsection {
-      color: #ff6b6b;
+      color: #ff00ff;
       font-weight: 500;
       margin-top: 15px;
       margin-bottom: 5px;
@@ -302,7 +361,7 @@
     }
 
     .prompt-highlight {
-      color: #ffd166;
+      color: #4a90e2;
       font-weight: 500;
     }
 
@@ -312,29 +371,12 @@
       border-radius: 8px;
       margin: 10px 0;
       display: block;
-      border-left: 3px solid #4ecdc4;
+      border-left: 3px solid #8a2be2;
     }
 
     .prompt-important {
       color: #ff6b6b;
       font-weight: 600;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 25px;
-      font-size: 0.95rem;
-      color: #aaa;
-      margin-top: 20px;
-      animation: fadeIn 1s ease-out;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-    }
-
-    footer p {
-      margin: 5px 0;
     }
 
     /* Responsive design */
@@ -344,7 +386,7 @@
       }
       
       #greeting {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
       }
       
       .prompt-container {
@@ -374,7 +416,7 @@
       }
       
       #greeting {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
       }
       
       .subtitle {
@@ -407,17 +449,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* Floating animation */
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-
-    .floating {
-      animation: float 4s ease-in-out infinite;
-    }
   </style>
 </head>
 <body>
@@ -434,9 +465,6 @@
       <h1>Job Description Generator</h1>
       <div id="greeting">Hello<span class="loader"></span></div>
       <p class="subtitle">Create world-class job descriptions, LinkedIn promotions, and screening questions with AI precision</p>
-      <div style="margin-top: 25px; font-size: 3rem; color: #4ecdc4;" class="floating">
-        <i class="fas fa-magic"></i>
-      </div>
     </header>
     
     <main>
@@ -450,11 +478,6 @@
         <pre id="prompt-text"></pre>
       </div>
     </main>
-    
-    <footer>
-      <p>Powered by Advanced AI Technology</p>
-      <p>Static GitHub Page | Pushing Limits with Modern Web Tech</p>
-    </footer>
   </div>
 
   <script>
@@ -693,15 +716,11 @@ Provide the inputs above. The system will auto-research, benchmark, and output a
       
       // Compose greeting
       if (name) {
-        greetingElement.textContent = greeting + " ";
-        const nameSpan = document.createElement("span");
-        nameSpan.style.fontWeight = "600";
-        nameSpan.style.color = "#4ecdc4";
-        greetingElement.appendChild(nameSpan);
+        greetingElement.innerHTML = greeting + " <span class='name-gradient'></span>,";
+        const nameSpan = greetingElement.querySelector('.name-gradient');
         await typeWriter(nameSpan, name, 120);
-        greetingElement.appendChild(document.createTextNode(","));
       } else {
-        greetingElement.textContent = greeting + ",";
+        greetingElement.innerHTML = "<span class='name-gradient'>" + greeting + "</span>,";
       }
       
       // Show a random weather animation
